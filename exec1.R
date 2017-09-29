@@ -71,6 +71,7 @@ hist(exec_1_1$num_projeto,breaks = c(0,1,2,3,4,5,6,7))
 barplot(table(exec_1_1$nivel_salario,exec_1_1$tempo_trabalho),  col=c("lightblue1", "lightblue2", "lightblue3"),
         main="Salário por Tempo Trabalhado", xlab="Anos Trabalhados", ylab="Qtd. Pessoas" )
 legend("topright", c("High", "Median", "Low"), fill=c("lightblue1", "lightblue2", "lightblue3"))
+#legend("topright", unique(dado$Amostra), col=unique(dado$Cor), pch=rep(20,2)) 
 #c.	Histograma para media_horas_mensais
 hist(exec_1_1$media_horas_mensais, breaks = 5)
 
