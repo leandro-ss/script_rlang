@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "\naula1 <- read.csv2(\"dataset/aula1.csv\")\nView (aula1)\n\nsummary(aula1)\n\naula1$Sexo\naula1$Altura..em.centímetros.\naula1[,c(1,5)]\n\ntable(aula1$Sexo)\nprop.table(table(aula1$Sexo))\n\ntable(aula1$Área.de.Conhecimento)\nprop.table(table(aula1$Área.de.Conhecimento))\n\n\ncolnames(aula1)\n\ncolnova = c(\"idade\",\"sexo\",\"altura\",\"peso\",\"areconh\",\"natsp\",\"satiCel\",\"timefut\",\"satban\",\"fuma\")\n\ncolnames(aula1) = colnova\n\ntable(aula1$areconh)\ntable( aula1$sexo,aula1$areconh)\n\ntable( aula1$satban,aula1$satiCel)\ntable( aula1$satban,aula1$natsp)\n\ntable (aula1$idade)\ntable(cut(aula1$idade, breaks = c(25,28,31,35), include.lowest = TRUE))\n\ntable (aula1$peso)\ntable(cut(aula1$peso, breaks = c(51,56,61,66,71,76,81), include.lowest = TRUE))\n\nt=0\nwhile (t < 10){\n    print(\"teste\");   t = t+1 \n}\n\npie(table(aula1$sexo))\n\n# \nhist(rnorm(1000,20,6))\n\nhist(aula1$idade)\nhist(aula1$idade, breaks = c(25,28,31,35))\nhist(aula1$peso)\nhist(aula1$peso,breaks = 4)\n\nhist(AirPassengers)\nhist(AirPassengers,breaks = 3)\nplot(AirPassengers,type =\"l\")\n\nlines(AirPassengers, type = \"o\")\n\n\n",
+    "created" : 1506805834740.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2669846650",
+    "id" : "89E6A86C",
+    "lastKnownWriteTime" : 1506782535,
+    "last_content_update" : 1506782535,
+    "path" : "C:/dev/git/script_tutorial_r/aula1.R",
+    "project_path" : "aula1.R",
+    "properties" : {
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
