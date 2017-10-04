@@ -33,5 +33,3 @@ cor (aula1[,c(3,4)])
 idade_p = (aula1[,1] - mean (aula1[,1]))/sd(aula1[,1])
 
 boxplot(aula1[,1] ~ aula1[,2])
-
-
