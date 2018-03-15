@@ -1,0 +1,66 @@
+---
+title: "Note de Atividades do Curso de Estatistica Aplicada"
+output: html_notebook
+---
+
+Exercício 1: Seja X~N(4,1), determine:
+```{r}
+pnorm(q=0)
+```
+A) P[X ≤ 4].
+```{r}
+pnorm(q=4, mean=4, sd=sqrt(1))
+```
+B) P[4 < X < 5].
+```{r}
+pnorm(q=5, mean=4, sd = sqrt(1)) - pnorm(q=4, mean=4, sd = sqrt(1))
+```
+C) P[2 ≤ X < 5].
+```{r}
+pnorm(q=5, mean=4, sd = sqrt(1)) - pnorm(q=2, mean=4, sd = sqrt(1))
+```
+D) P[5 ≤ X ≤ 7].
+```{r}
+pnorm(q=7, mean=4, sd = sqrt(1)) - pnorm(q=5, mean=4, sd = sqrt(1))
+```
+E) P[X ≤ 1].
+```{r}
+pnorm(q=1, mean=4, sd = sqrt(1))
+```
+F) P[0 ≤ X ≤ 2].
+```{r}
+pnorm(q=2, mean=4, sd = sqrt(1)) - pnorm(q=0, mean=4, sd = sqrt(1)) 
+```
+
+Exercício 2: Doentes, sofrendo de certa moléstia, são submetidos a um tratamento intensivo cujo
+tempo de cura foi modelado por uma densidade Normal de média 15 e desvio-padrão 2 (em dias).
+Seja X o tempo de cura, temos que X~N 15, 4 .
+A) Qual a probabilidade de um paciente demorar mais de 17 dias para se recuperar?
+```{r}
+1-pnorm(q=17, mean=15, sd = 2) 
+```
+B) Qual a probabilidade de um paciente demorar menos de 20 dias?
+```{r}
+pnorm(q=20, mean=15, sd = 2) 
+```
+
+Exercício 3: Os depósitos efetuados em um banco durante o mês de janeiro são distribuídos
+normalmente com média de \$10.000,00 e desvio-padrão de $1.500,00. Um depósito é selecionado ao
+acaso no mês de janeiro. Encontre a probabilidade de que o depósito seja:
+
+A) R\$10.000 ou menos.
+```{r}
+pnorm(q=10000, mean=10000, sd=1500) 
+```
+B) pelo menos $10.000
+```{r}
+1-pnorm(q=10000, mean=10000, sd=1500) 
+```
+C) Um valor entre \$12.000 e \$15.000
+```{r}
+pnorm(q=15000, mean=10000, sd=1500) - pnorm(q=12000, mean=10000, sd=1500)
+```
+D) Maior do que $20.000
+```{r}
+round(1-pnorm(q=20000, mean=10000, sd=1500),10)
+```
