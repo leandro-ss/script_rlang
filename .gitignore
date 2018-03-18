@@ -1,8 +1,6 @@
-.Rproj.user/
 .Rhistory
 .RData
 .Ruserdata
 *.nb.html
-.Rproj.user
 *.Rproj
-.Rproj.user/shared/notebooks/paths
+.Rproj.user/*
