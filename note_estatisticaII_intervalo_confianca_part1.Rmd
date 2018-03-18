@@ -28,6 +28,10 @@ c(a.m + (P_95 *a.sd/a.n), a.m - (P_95 *a.sd/a.n))
 variância 16 foi coletada e forneceu uma média amostral de 8. Construa intervalos com
 confiança 90%, 95% e 99%. Comente as diferenças encontradas.
 ```{r}
+P_90=qnorm((.90)/2)
+P_95=qnorm((.95)/2)
+P_99=qnorm((.99)/2)
+
 a.n=25
 a.m=8
 a.v=16
@@ -35,7 +39,6 @@ a.v=16
 c(a.m + (P_90 *sqrt(a.v)/a.n), a.m - (P_90 *sqrt(a.v)/a.n))
 c(a.m + (P_95 *sqrt(a.v)/a.n), a.m - (P_95 *sqrt(a.v)/a.n))
 c(a.m + (P_99 *sqrt(a.v)/a.n), a.m - (P_99 *sqrt(a.v)/a.n))
-
 ```
 
 
@@ -57,7 +60,7 @@ c(a.m + (P_99 *sqrt(a.v)/a.n), a.m - (P_99 *sqrt(a.v)/a.n))
 
 B) Se você desejasse diminuir a amplitude do intervalo, quais seriam suas alternativas?
 ```{r}
-paste("Aumentar o grau de confiança")
+paste("Aumentar o grau de confiança ou aumentar a amostra")
 ```
 
 **Exercício 4**: O consumo de combustível é uma variável aleatória com parâmetros dependendo do tipo
@@ -67,10 +70,7 @@ amostra de 40 automóveis desse modelo e observamos o seu consumo.
 
 A) Quem seria um estimador do consumo médio para todos os automóveis desse tipo?
 ```{r}
-a.n=40
-a.sd=2
-
-a.n/a.sd
+paste("O estimador é x barra")
 ```
 
 B) Se a amostra forneceu um consumo médio de 9,3 km/l, construa um intervalo de confiança de 90%
@@ -126,7 +126,7 @@ a.m<-mean(a)
 a.v<-var(a)
 a.sd<- sd(a)
 
-c(a.m + (P_95 *a.sd/sqrt(a.n)), a.m - (P_95 *a.sd/sqrt(a.n)))
+c(a.m - (P_95 *a.sd/sqrt(a.n)), a.m + (P_95 *a.sd/sqrt(a.n)))
 ```
 
 **Exercício 8**: Numa pesquisa com 50 eleitores, o candidato José obteve 0,34 da preferência dos eleitores. Construa, para a confiança de 95%, um intervalo para a proporção de votos a serem recebidos pelo candidato supondo que a eleição fosse feita nesse momento.
@@ -134,14 +134,14 @@ c(a.m + (P_95 *a.sd/sqrt(a.n)), a.m - (P_95 *a.sd/sqrt(a.n)))
 a.n<-50
 a.p<-0.34
 
-c(a.m - (P_95 *a.p/sqrt(a.p*(1-a.p)/a.n)), a.m + (P_95 *a.p/sqrt(a.p*(1-a.p)/a.n)))
+c(a.p - (P_95 *sqrt(a.p*(1-a.p)/a.n)), a.p + (P_95 * sqrt(a.p*(1-a.p)/a.n)))
 ```
-**Exercício 9** : Uma amostra aleatória de 625 donas de casa revela que 70% delas preferem a marca de detergente A. Construa um intervalo de confiança para a proporção de donas de casa que preferem A com coeficiente de confiança de 90%. 
+**Exercício 9** : Uma amostra aleatória de 625 donas de casa revela que 70% delas preferem a marca de detergente A. Construa um intervalo de confiança para a proporção de donas de casa que preferem A com coeficiente de confiança de 95%. 
 ```{r}
 a.n<-625
 a.p<-0.7
 
-c(a.m - (P_95 *a.p/sqrt(a.p-(1-a.p)/a.n)), a.m + (P_95 *a.p/sqrt(a.p-(1-a.p)/a.n)))
+c(a.p - (P_90 *sqrt(a.p*(1-a.p)/a.n)), a.p + (P_90 * sqrt(a.p*(1-a.p)/a.n)))
 ```
 
 **Exercício 10**: Numa pesquisa de mercado, desejamos estimar a proporção de pessoas que compram um determinado sabonete.
@@ -151,8 +151,7 @@ confiança com 95% de confiança para a proporção de pessoas que compram o pro
 ```{r}
 a.n<-100
 a.p<-0.8
-
-c(a.m - (P_95 *a.p/sqrt(a.p-(1-a.p)/a.n)), a.m + (P_95 *a.p/sqrt(a.p-(1-a.p)/a.n)))
+c(a.p - (P_95 *sqrt(a.p*(1-a.p)/a.n)), a.p + (P_95 * sqrt(a.p*(1-a.p)/a.n)))
 ```
 
 B) Se sabemos que a aceitação do produto é no mínimo 0,8, qual deve ser o tamanho da
