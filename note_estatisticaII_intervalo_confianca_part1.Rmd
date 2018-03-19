@@ -5,9 +5,9 @@ output: html_notebook
 # Ref. http://www.leg.ufpr.br/Rpira/Rpira/node13.html
 **Constantes do Problea**
 ```{r}
-P_90=qnorm((1+.90)/2)
-P_95=qnorm((1+.95)/2)
-P_99=qnorm((1+.99)/2)
+P_90=qnorm(.90)
+P_95=qnorm(.95)
+P_99=qnorm(.99)
 ```
 
 **Exercício 1**: Por analogia a produtos similares, o tempo de reação de um novo medicamento pode ser considerado como tendo distribuição Normal com desvio-padrão igual a 2 minutos (amédia é desconhecida). Vinte pacientes foram sorteados, receberam o medicamente e tiveram seu tempo de reação anotado. Os dados foram os seguintes (em minutos): 2.9, 3.4, 3.5, 4.1, 4.6,
@@ -82,8 +82,7 @@ a.m=9.3
 
 c(a.m + (P_90 *a.sd/sqrt(a.n)), a.m - (P_90 *a.sd/sqrt(a.n)))
 ```
-C) Qual deve ser o tamanho da amostra se eu quiser um erro de no máximo 0,3 com 95% de
-confiança?
+C) Qual deve ser o tamanho da amostra se eu quiser um erro de no máximo 0,3 com 95% de confiança?
 ```{r}
 a.n=170
 a.sd=2
@@ -91,8 +90,6 @@ a.m=9.3
 
 P_95 * a.sd/sqrt(a.n)
 ```
-
-
 **Exercício 5**: Um fabricante afirma que sua vacina contra gripe imuniza em 80% dos casos. Uma
 amostra de 25 pessoas que tomaram a vacina foi sorteada e testes foram feitos para verificar a
 imunização ou não desses indivíduos. Se o fabricante estiver certo, qual é a probabilidade da

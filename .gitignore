@@ -4,3 +4,4 @@
 *.nb.html
 *.Rproj
 .Rproj.user/*
+.Rproj.user

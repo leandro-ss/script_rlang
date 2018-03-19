@@ -1,0 +1,122 @@
+---
+output:  html_notebook
+title:  "Entrega de Exercícios Inferência"
+author: "Leandro Sampaio Silva"
+---
+[Inferencia - Testes de Hipoteses](https://1drv.ms/b/s!AjhHHIPrrq6S7G_iZg3rtdPNxIfk)
+[Misc](https://www.youtube.com/user/ecograd/videos)
+
+**Exercício 6**: O nível de colesterol no sangue é uma variável aleatória com distribuição normal, de média desconhecida µ e desvio-padrão σ= 60 mg/100 ml.
+
+*a)* Qual um estimador para a média µ?
+```{r}
+paste ("O estimador de mi é xBarra")
+```
+*b)* Você conhece a distribuição desse estimador?
+```{r}
+paste ("X ~ Normal (µ, σ²/n)")
+```
+*c)* Em uma amostra de 50 pacientes, observou-se uma média amostral xBarra=268. Qual seria uma estimativa pontual para µ?
+```{r}
+paste ("µ=268")
+```
+*d)* Considerando a amostra do item anterior, construa um intervalo de confiança para a média desconhecida com nível de confiança de 95%.
+```{r}
+a.n = 50
+a.m = 268
+po.m = a.m #supoem-se que
+po.sd = 60
+a.var = po.sd^2
+
+c(a.m - qnorm(.95) * po.sd/sqrt(a.n), 268 + qnorm(.95) * po.sd/sqrt(a.n))
+```
+
+*e)* Teste a hipótese de que µ=260, contra a alternativa de que µ>260 com base na mesma amostra. Utilize um nivel de 5%.
+```{r}
+a.n = 50
+a.m = 268
+po.m = a.m #supoem-se que
+po.sd = 60
+a.var = po.sd^2
+alpha = 0.05
+
+#paste ("H°: µ=260")
+#paste ("H¹: µ>0.05")
+#paste ("RC = {µ>xc}")
+#paste ("Þ [regeitar H° | H¹ é verdade] = 0.05")
+#a.m + qnorm(.05) * po.sd/sqrt(a.n)
+RC = round (qnorm(.05, mean = a.m ,sd = po.sd/sqrt(a.n)), 4)
+
+paste ("Conclusão: Com base no estudo aceitamos qualquer que esteja fora da região critica ou seja, valores acima de", RC)
+```
+*f)* Qual deve ser o tamanho da amostra para que o intervalo de confiança tenha um erro de 15 unidades? Use 95% de confiança.
+```{r}
+a.n = 50
+a.m = 268
+po.m = a.m
+po.sd = 60
+a.var = po.sd^2
+alpha = 0.05
+#paste ("erro = qnorm(.95) * po.sd/sqrt(a.n)")
+#paste ("15 = qnorm(.95) * po.sd/sqrt(a.n.projetada)")
+a.n.projetada = round ((qnorm(.95) * po.sd/15)^2)
+
+paste ("Conclusão: Para que tenhamos um erro de 15 unidades será necessária uma amostra de", a.n.projetada,"unidades")
+```
+**Exercício 8:** Suponha que se deseje estimar a proporção p de indivíduos com certa doença em uma data região. Selecionou-se uma amostra aleatória de 100 pessoas e constatou-se que 25 eram portadoras da doença.
+*a)* Calcule a estimativa pontual da proporção p.
+```{r}
+a.n = 100
+a.positiva = 25
+#paste ("erro = qnorm(.95) * po.sd/sqrt(a.n)")
+#paste ("15 = qnorm(.95) * po.sd/sqrt(a.n.projetada)")
+p = 25/100
+
+paste ("Conclusão: Para uma amostra de 100 pessoas, onde o número de portadores é igual 25, estima-se um proporção de", p)
+```
+*b)* Construa o intervalo de confiança para p com coeficiente de confiança de 95%. Qual o comprimento do intervalo?
+```{r}
+a.n = 100
+a.posit = 25
+a.negat = 75
+#a.e = (a.posit * a.posit/a.n) + (a.negat * a.negat/a.n)
+#a.m = a.e
+#a.var= ((a.posit - a.m)^2 * a.posit/a.n) + ((a.negat - a.m)^2 * a.negat/a.n)
+#a.sd = sqrt(((a.posit - a.m)^2 * a.posit/a.n) + ((a.negat - a.m)^2 * a.negat/a.n))
+#paste ("erro = qnorm(.95) * po.sd/sqrt(a.n)")
+#paste ("15 = qnorm(.95) * po.sd/sqrt(a.n.projetada)")
+
+a.p = a.posit/a.n
+
+ic = c(a.p - (qnorm(.95) * sqrt(a.p*(1-a.p)/a.n)), a.p + (qnorm(.95) * sqrt(a.p*(1-a.p)/a.n)))
+
+paste ("Conclusão: O intervalo de confiança para o intervalo p, é igual a", round (ic[1],3), round (ic[2],3))
+```
+*c)* Um pesquisador acredita que a proporção de doentes é superior a 20%. Teste essa hipótese ao nível alpha = 0,05. Formule as hipóteses nula e alternativa.
+```{r}
+a.n = 100
+a.posit = 25
+a.negat = 75
+
+a.p = a.posit/a.n
+
+a.sd= sqrt(a.p*(1-a.p)/a.n)
+
+paste ("H°: p= 0.2")
+paste ("H¹: p> 0.2")
+
+paste ("RC = {p>pc}")
+paste ("Þ [regeitar H° | H¹ é verdade] = 0.05")
+paste ("alpha = Þ[p^ > pc | p=0.2] Se p=0.2")
+paste ("Pelo TLC p^ ~ N(0.25, 0.25 * (10- 0.25)/100)")
+
+paste ("Þ[p^ - 0.05 / 0.043 > p¹ - 0.05  / 0.043] = 0.05")
+
+paste ("Þ[ Z > p¹ - 0.25 / 0.043] = 0.05")
+
+paste ("p¹ - 0.25/ 0.043 = 1.64 => p¹=0.086")
+
+paste ("RC = {p^ >",-qnorm(0.05)*a.sd+a.p,"}")
+
+paste("Como p^ não está em RC aceitamos H° e concluimos que a propoção é superior a 20%")
+```

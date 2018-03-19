@@ -177,9 +177,10 @@ d) Determine o critério de decisão com nível de significância de 5%.
 paste ("alpha = 5% - Þ[rejeitar H° | H¹ é verdade ]")
 paste ("0.05 = Þ[p^ > p¹ | p = 0.05] Se p=0.05 -> o^ ~ N(0.05, 0.05 * 0.95/100)")
 
+
 paste ("Þ[p^ - 0.05 / SQRT (0.000475) > p¹ - 0.05  / SQRT (0.000475)] = 0.05")
 
-paste ("Þ[ Z > p¹ - 0.05 / 0.22] = 0.05")
+paste ("Þ[ Z > pc - 0.05 / 0.22] = 0.05")
 
 paste ("p¹ - 0.05/ 0.022 = 1.64 => p¹=0.086")
 
@@ -220,4 +221,3 @@ T = 5.5 - 6 / (2 /sqrt (10)) = - 0.79
 
 1.833 *2
 ```
-
