@@ -1,5 +1,7 @@
 ---
-output:  html_notebook
+output: 
+  html_notebook: 
+    code_folding: hide
 title:  "Entrega de Exercícios Inferência"
 author: "Leandro Sampaio Silva"
 ---
@@ -7,7 +9,6 @@ author: "Leandro Sampaio Silva"
 [Misc](https://www.youtube.com/user/ecograd/videos)
 
 **Exercício 6**: O nível de colesterol no sangue é uma variável aleatória com distribuição normal, de média desconhecida µ e desvio-padrão σ= 60 mg/100 ml.
-
 *a)* Qual um estimador para a média µ?
 ```{r}
 paste ("O estimador de mi é xBarra")
@@ -28,9 +29,8 @@ po.m = a.m #supoem-se que
 po.sd = 60
 a.var = po.sd^2
 
-c(a.m - qnorm(.95) * po.sd/sqrt(a.n), 268 + qnorm(.95) * po.sd/sqrt(a.n))
+c(a.m - qnorm(.95) * po.sd/sqrt(a.n), a.m + qnorm(.95) * po.sd/sqrt(a.n))
 ```
-
 *e)* Teste a hipótese de que µ=260, contra a alternativa de que µ>260 com base na mesma amostra. Utilize um nivel de 5%.
 ```{r}
 a.n = 50
@@ -90,7 +90,7 @@ a.p = a.posit/a.n
 
 ic = c(a.p - (qnorm(.95) * sqrt(a.p*(1-a.p)/a.n)), a.p + (qnorm(.95) * sqrt(a.p*(1-a.p)/a.n)))
 
-paste ("Conclusão: O intervalo de confiança para o intervalo p, é igual a", round (ic[1],3), round (ic[2],3))
+paste ("Conclusão: O intervalo de confiança para o proporção p, é igual a", round (ic[1],3), round (ic[2],3))
 ```
 *c)* Um pesquisador acredita que a proporção de doentes é superior a 20%. Teste essa hipótese ao nível alpha = 0,05. Formule as hipóteses nula e alternativa.
 ```{r}
@@ -119,4 +119,130 @@ paste ("p¹ - 0.25/ 0.043 = 1.64 => p¹=0.086")
 paste ("RC = {p^ >",-qnorm(0.05)*a.sd+a.p,"}")
 
 paste("Como p^ não está em RC aceitamos H° e concluimos que a propoção é superior a 20%")
+```
+**Exercício 11:** O número de pontos em um exame de inglês tem sido historicamente ao redor de 80. Sorteamos 10 estudantes que fizeram recentemente esse exame e observamos as notas: 65, 74, 78, 86, 59, 84, 75, 72, 81 e 83.
+*a)* Qual uma estimativa pontual para a nota média?
+```{r}
+a = c (65,74,78,86,59,84,75,72,81,83)
+a.n = length(a)
+a.m = mean(a)
+
+paste ("Conclusão: Como estimativa pontual sobre a notá media temos", a.m)
+```
+*b)* Construa um intervalo de confiança para a nota média com 95% de confiança.
+```{r}
+a = c (65,74,78,86,59,84,75,72,81,83)
+a.n = length(a)
+a.m = mean(a)
+a.var = var (a)
+a.sd = sqrt(a.var)
+
+ic = c(a.m - qnorm(.95) * a.sd/sqrt(a.n), a.m + qnorm(.95) * a.sd/sqrt(a.n))
+
+paste ("Conclusão: O intervalo de confiança para o intervalo p, é igual a", round (ic[1],3), round (ic[2],3))
+```
+*c)* Especialistas desconfiam que a média diminuiu e desejam testar essa afirmação através de um teste de hipóteses, com nível de significância de 5%. Fazendo as suposições necessárias, qual seria a conclusão do teste?
+```{r}
+a = c (65,74,78,86,59,84,75,72,81,83)
+a.n = length(a)
+a.m = mean(a)
+a.sd = sd(a)
+
+#paste ("H°: µ=260")
+#paste ("H¹: µ>0.05")
+#paste ("RC = {µ>xc}")
+#paste ("Þ [regeitar H° | H¹ é verdade] = 0.05")
+#a.m + qnorm(.05) * po.sd/sqrt(a.n)
+RC = round (qnorm(.05, mean = a.m ,sd = a.sd/sqrt(a.n)), 4)
+
+paste ("Conclusão: Com base no estudo não aceitamos visto que a aceitamos qualquer que esteja fora da região critica ou seja, valores acima de", RC)
+```
+
+**Exercício 12:** A resistência de um certo tipo de cabo de aço é uma variável aleatória modelada pela distribuição Normal com desvio-padrão 6 kgf. Uma amostra de tamanho 25 desses cabos, escolhida ao acaso, forneceu média igual a 9,8 kgf. Para o teste µ = 13 contra µ < 13, qual é o nível descritivo? Que conclusão você consideraria adequada?
+```{r}
+a.n = 25
+a.m = 9.8
+a.sd = 6
+
+RC = round (qnorm(.05, mean = a.m ,sd = a.sd/sqrt(a.n)), 4)
+
+paste ("Conclusão: Com base no estudo não aceitamos visto que a aceitamos qualquer que esteja fora da região critica ou seja, valores acima de", RC)
+```
+**Exercício 13 (Computacional):** Considerando os dados do arquivo cancer.xlsx, defina dois grupos de pacientes: um de jovens, com idades inferiores ou iguais a 54 anos e um de idosos com idades superiores a 54 anos. Os grupos deverão conter 191 e 171 pacientes. Considere a variável nitrogênio na uréia (N).
+*A)* Construa um box-plot para a variável N, para cada um dos grupos etários e compare-os descritivamente. Com base nos gráficos, existem indicações de que a idade está influenciando a concentração de nitrogênio na ureia?
+```{r}
+library(readr)
+library(ggplot2)
+cancer <- read_delim("dataset/cancer.csv", ";", escape_double = FALSE, trim_ws = TRUE)
+
+cancer <- cancer[order(cancer$Idade),]
+
+cancer$grupo_idade <- ''
+
+cancer[seq_len(191), ]$grupo_idade <- 'jovem'
+cancer[-seq_len(191), ]$grupo_idade <- 'idoso'
+
+p <- ggplot(cancer, aes(x=grupo_idade, y=N)) +  geom_boxplot(); p
+```
+```{r}
+paste("Conclusão:Podemos considerar sim, que a idade afeta a quantidade de Uréia, contudo esse não é o unico fator determinante")
+```
+*B)* É de interesse verificar se a média populacional da variável N para os pacientes idosos é superior a 15. Sendo a variância desconhecida, qual conclusão pode ser obtida para um nível de significância de 5%?
+```{R}
+cancer <- read_delim("dataset/cancer.csv", ";", escape_double = FALSE, trim_ws = TRUE)
+cancer <- cancer[order(cancer$Idade),]
+cancer.idoso <- 
+
+a <- cancer[-seq_len(191), ]$N
+
+a.m <- mean(a)
+a.sd <-   sd (a)
+a.n <- nrow (a)
+
+# Igual contra diferente
+t.test(a, alternative = "greater", mu = 15, conf.level = 0.95) 
+```
+*C)* Considerando agora o grupo de pacientes mais jovens, verifique se a média populacional para N é menor do que 15. Obtenha o nível descritivo e conclua ao nível de 5%.
+```{R}
+cancer <- read_delim("dataset/cancer.csv", ";", escape_double = FALSE, trim_ws = TRUE)
+cancer <- cancer[order(cancer$Idade),]
+
+a <- cancer[seq_len(191), ]$N
+
+a.m <- mean(a)
+a.sd <-   sd (a)
+a.n <- nrow (a)
+
+# Igual contra diferente
+t.test(a, alternative = "less", mu = 15, conf.level = 0.95) 
+```
+*D)* Construa intervalos de confiança para a média populacional da variável N para os dois grupos com 95% de confiança. Compare os intervalos.
+```{R}
+cancer <- read_delim("dataset/cancer.csv", ";", escape_double = FALSE, trim_ws = TRUE)
+cancer <- cancer[order(cancer$Idade),]
+
+a <- cancer$N
+
+a.m <- mean(a)
+a.sd <- sd (a)
+a.n <- length (a)
+
+c(a.m-qnorm(0.95,a.m,a.sd/sqrt(a.n)), a.m+qnorm(0.95,a.m,a.sd/sqrt(a.n)))
+```
+*E)* Com base nos resultados do itens B e C, discuta o comportamento das médias da variável N para os dois grupos de pacientes.
+```{R}
+paste("Podemoos constatar que o comportamento é distinto para as amostras contudo, e que a região critica entre elas beira os 17")
+```
+
+**Exercício 14 (Computacional):** Um criador tem constatado uma proporção de 10% do rebanho com verminose. O veterinário alterou a dieta dos animais e acredita que a doença diminuiu de intensidade. Um exame de 100 cabeças do rebanho, escolhidas ao acaso, indicou 8 delas com verminose. Ao nível de 5%, há indícios de que a proporção diminuiu?
+```{R}
+############ Teste para propor??o populacional ###############
+# x: n?mero de sucessos na amostra
+# n: n?mero de realiza??es da amostra
+# p: probabilidade de sucesso a ser testada
+# alternative: two.sided, less ou greater
+prop.test(x = 8, n= 100, p = 0.1, alternative = "two.sided", correct = F, conf.level = 0.95) 
+```
+```{R}
+paste("Há um pequeno indicio de que a doença diminuiu.")
 ```
