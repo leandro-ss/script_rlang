@@ -23,106 +23,89 @@ paste ("µ=268")
 ```
 *d)* Considerando a amostra do item anterior, construa um intervalo de confiança para a média desconhecida com nível de confiança de 95%.
 ```{r}
+rm(list=ls())
+
 a.n = 50
-a.m = 268
-po.m = a.m #supoem-se que
 po.sd = 60
 a.var = po.sd^2
 
-c(a.m - qnorm(.95) * po.sd/sqrt(a.n), a.m + qnorm(.95) * po.sd/sqrt(a.n))
+c(a.m - qnorm(.975) * po.sd/sqrt(a.n), a.m + qnorm(.975) * po.sd/sqrt(a.n))
 ```
 *e)* Teste a hipótese de que µ=260, contra a alternativa de que µ>260 com base na mesma amostra. Utilize um nivel de 5%.
 ```{r}
+rm(list=ls())
+
 a.n = 50
-a.m = 268
-po.m = a.m #supoem-se que
+a.m = 260
 po.sd = 60
-a.var = po.sd^2
 alpha = 0.05
 
-#paste ("H°: µ=260")
-#paste ("H¹: µ>0.05")
-#paste ("RC = {µ>xc}")
-#paste ("Þ [regeitar H° | H¹ é verdade] = 0.05")
-#a.m + qnorm(.05) * po.sd/sqrt(a.n)
-RC = round (qnorm(.05, mean = a.m ,sd = po.sd/sqrt(a.n)), 4)
+paste ("H°: µ=260")
+paste ("H¹: µ> 260")
+paste ("RC = {µ>xc}")
 
-paste ("Conclusão: Com base no estudo aceitamos qualquer que esteja fora da região critica ou seja, valores acima de", RC)
+xc = a.m + (qnorm(0.95) * po.sd/sqrt(a.n))
+paste ("Conclusão: Com base no estudo aceitamos qualquer valor que esteja fora da região critica, ou seja, valores acima de", round(xc,2))
 ```
 *f)* Qual deve ser o tamanho da amostra para que o intervalo de confiança tenha um erro de 15 unidades? Use 95% de confiança.
 ```{r}
+rm(list=ls())
+
 a.n = 50
 a.m = 268
 po.m = a.m
 po.sd = 60
-a.var = po.sd^2
-alpha = 0.05
-#paste ("erro = qnorm(.95) * po.sd/sqrt(a.n)")
-#paste ("15 = qnorm(.95) * po.sd/sqrt(a.n.projetada)")
-a.n.projetada = round ((qnorm(.95) * po.sd/15)^2)
+a.n.projetada = (qnorm(.975) * po.sd/15)^2
 
-paste ("Conclusão: Para que tenhamos um erro de 15 unidades será necessária uma amostra de", a.n.projetada,"unidades")
+paste ("Conclusão: Para que tenhamos um erro de 15 unidades será necessária uma amostra de", round (a.n.projetada),"unidades")
 ```
 **Exercício 8:** Suponha que se deseje estimar a proporção p de indivíduos com certa doença em uma data região. Selecionou-se uma amostra aleatória de 100 pessoas e constatou-se que 25 eram portadoras da doença.
 *a)* Calcule a estimativa pontual da proporção p.
 ```{r}
+rm(list=ls())
+
 a.n = 100
 a.positiva = 25
-#paste ("erro = qnorm(.95) * po.sd/sqrt(a.n)")
-#paste ("15 = qnorm(.95) * po.sd/sqrt(a.n.projetada)")
 p = 25/100
 
 paste ("Conclusão: Para uma amostra de 100 pessoas, onde o número de portadores é igual 25, estima-se um proporção de", p)
 ```
 *b)* Construa o intervalo de confiança para p com coeficiente de confiança de 95%. Qual o comprimento do intervalo?
 ```{r}
+rm(list=ls())
+
 a.n = 100
 a.posit = 25
 a.negat = 75
-#a.e = (a.posit * a.posit/a.n) + (a.negat * a.negat/a.n)
-#a.m = a.e
-#a.var= ((a.posit - a.m)^2 * a.posit/a.n) + ((a.negat - a.m)^2 * a.negat/a.n)
-#a.sd = sqrt(((a.posit - a.m)^2 * a.posit/a.n) + ((a.negat - a.m)^2 * a.negat/a.n))
-#paste ("erro = qnorm(.95) * po.sd/sqrt(a.n)")
-#paste ("15 = qnorm(.95) * po.sd/sqrt(a.n.projetada)")
-
 a.p = a.posit/a.n
 
-ic = c(a.p - (qnorm(.95) * sqrt(a.p*(1-a.p)/a.n)), a.p + (qnorm(.95) * sqrt(a.p*(1-a.p)/a.n)))
+ic = c(a.p - (qnorm(.975) * sqrt(a.p*(1-a.p)/a.n)), a.p + (qnorm(.975) * sqrt(a.p*(1-a.p)/a.n)))
 
-paste ("Conclusão: O intervalo de confiança para o proporção p, é igual a", round (ic[1],3), round (ic[2],3))
+paste ("Conclusão: O intervalo de confiança para o proporção p, é igual a", round (ic[1],3), round (ic[2],3),",apresentando um comprimento de",round(ic[2]-ic[1],3)  )
 ```
 *c)* Um pesquisador acredita que a proporção de doentes é superior a 20%. Teste essa hipótese ao nível alpha = 0,05. Formule as hipóteses nula e alternativa.
 ```{r}
+rm(list=ls())
+
 a.n = 100
-a.posit = 25
-a.negat = 75
-
-a.p = a.posit/a.n
-
+a.p = 0.2
 a.sd= sqrt(a.p*(1-a.p)/a.n)
+alpha = 0.05
 
 paste ("H°: p= 0.2")
 paste ("H¹: p> 0.2")
 
-paste ("RC = {p>pc}")
-paste ("Þ [regeitar H° | H¹ é verdade] = 0.05")
-paste ("alpha = Þ[p^ > pc | p=0.2] Se p=0.2")
-paste ("Pelo TLC p^ ~ N(0.25, 0.25 * (10- 0.25)/100)")
+paste ("RC = (pChapeu > pc)")
+paste ("RC = {pChapeu >",round((pc = -qnorm(alpha)*a.sd+a.p) , 2),"}")
 
-paste ("Þ[p^ - 0.05 / 0.043 > p¹ - 0.05  / 0.043] = 0.05")
-
-paste ("Þ[ Z > p¹ - 0.25 / 0.043] = 0.05")
-
-paste ("p¹ - 0.25/ 0.043 = 1.64 => p¹=0.086")
-
-paste ("RC = {p^ >",-qnorm(0.05)*a.sd+a.p,"}")
-
-paste("Como p^ não está em RC aceitamos H° e concluimos que a propoção é superior a 20%")
+paste("Como pChapeu não está em RC, aceitamos H0 e concluimos que a propoção é igual a 20%")
 ```
 **Exercício 11:** O número de pontos em um exame de inglês tem sido historicamente ao redor de 80. Sorteamos 10 estudantes que fizeram recentemente esse exame e observamos as notas: 65, 74, 78, 86, 59, 84, 75, 72, 81 e 83.
 *a)* Qual uma estimativa pontual para a nota média?
+
 ```{r}
+rm(list=ls())
+
 a = c (65,74,78,86,59,84,75,72,81,83)
 a.n = length(a)
 a.m = mean(a)
@@ -130,51 +113,46 @@ a.m = mean(a)
 paste ("Conclusão: Como estimativa pontual sobre a notá media temos", a.m)
 ```
 *b)* Construa um intervalo de confiança para a nota média com 95% de confiança.
-```{r}
+```{r} 
+rm(list=ls())
+
 a = c (65,74,78,86,59,84,75,72,81,83)
 a.n = length(a)
 a.m = mean(a)
 a.var = var (a)
 a.sd = sqrt(a.var)
 
-ic = c(a.m - qnorm(.95) * a.sd/sqrt(a.n), a.m + qnorm(.95) * a.sd/sqrt(a.n))
+ic = c(a.m - qt(0.975, df = a.n-1) * a.sd/sqrt(a.n), a.m + qt(0.975, df = a.n-1) * a.sd/sqrt(a.n))
 
 paste ("Conclusão: O intervalo de confiança para o intervalo p, é igual a", round (ic[1],3), round (ic[2],3))
+
 ```
 *c)* Especialistas desconfiam que a média diminuiu e desejam testar essa afirmação através de um teste de hipóteses, com nível de significância de 5%. Fazendo as suposições necessárias, qual seria a conclusão do teste?
 ```{r}
+rm(list=ls())
+
 a = c (65,74,78,86,59,84,75,72,81,83)
 a.n = length(a)
 a.m = mean(a)
+po.m = 80
 a.sd = sd(a)
 
-#paste ("H°: µ=260")
-#paste ("H¹: µ>0.05")
-#paste ("RC = {µ>xc}")
-#paste ("Þ [regeitar H° | H¹ é verdade] = 0.05")
-#a.m + qnorm(.05) * po.sd/sqrt(a.n)
-RC = round (qnorm(.05, mean = a.m ,sd = a.sd/sqrt(a.n)), 4)
+tc = qt(0.95, df = a.n-1)
+t = (po.m - a.m  ) / (a.sd /sqrt(a.n))
 
-paste ("Conclusão: Com base no estudo não aceitamos visto que a aceitamos qualquer que esteja fora da região critica ou seja, valores acima de", RC)
+paste ("Conclusão: T Calculado < T Crítico (", round (t,2),"e",round(tc,2),"respectivamente) portando aceita H0 e assume que a média é menor que 80.")
 ```
 
-**Exercício 12:** A resistência de um certo tipo de cabo de aço é uma variável aleatória modelada pela distribuição Normal com desvio-padrão 6 kgf. Uma amostra de tamanho 25 desses cabos, escolhida ao acaso, forneceu média igual a 9,8 kgf. Para o teste µ = 13 contra µ < 13, qual é o nível descritivo? Que conclusão você consideraria adequada?
-```{r}
-a.n = 25
-a.m = 9.8
-a.sd = 6
-
-RC = round (qnorm(.05, mean = a.m ,sd = a.sd/sqrt(a.n)), 4)
-
-paste ("Conclusão: Com base no estudo não aceitamos visto que a aceitamos qualquer que esteja fora da região critica ou seja, valores acima de", RC)
-```
 **Exercício 13 (Computacional):** Considerando os dados do arquivo cancer.xlsx, defina dois grupos de pacientes: um de jovens, com idades inferiores ou iguais a 54 anos e um de idosos com idades superiores a 54 anos. Os grupos deverão conter 191 e 171 pacientes. Considere a variável nitrogênio na uréia (N).
-*A)* Construa um box-plot para a variável N, para cada um dos grupos etários e compare-os descritivamente. Com base nos gráficos, existem indicações de que a idade está influenciando a concentração de nitrogênio na ureia?
+
+*a)* Construa um box-plot para a variável N, para cada um dos grupos etários e compare-os descritivamente. Com base nos gráficos, existem indicações de que a idade está influenciando a concentração de nitrogênio na ureia?
 ```{r}
+rm(list=ls())
+
 library(readr)
 library(ggplot2)
-cancer <- read_delim("dataset/cancer.csv", ";", escape_double = FALSE, trim_ws = TRUE)
 
+cancer <- read.csv(file="dataset/cancer.csv", header=TRUE, sep=";")
 cancer <- cancer[order(cancer$Idade),]
 
 cancer$grupo_idade <- ''
@@ -182,16 +160,16 @@ cancer$grupo_idade <- ''
 cancer[seq_len(191), ]$grupo_idade <- 'jovem'
 cancer[-seq_len(191), ]$grupo_idade <- 'idoso'
 
-p <- ggplot(cancer, aes(x=grupo_idade, y=N)) +  geom_boxplot(); p
+p <- ggplot(cancer, aes(x=grupo_idade, y=N)) +  geom_boxplot();p
+
+paste("Conclusão:Podemos considerar sim, que a idade afeta a quantidade de Uréia, contudo esse pode não ser o único fator determinante")
 ```
+*b)* É de interesse verificar se a média populacional da variável N para os pacientes idosos é superior a 15. Sendo a variância desconhecida, qual conclusão pode ser obtida para um nível de significância de 5%?
 ```{r}
-paste("Conclusão:Podemos considerar sim, que a idade afeta a quantidade de Uréia, contudo esse não é o unico fator determinante")
-```
-*B)* É de interesse verificar se a média populacional da variável N para os pacientes idosos é superior a 15. Sendo a variância desconhecida, qual conclusão pode ser obtida para um nível de significância de 5%?
-```{R}
-cancer <- read_delim("dataset/cancer.csv", ";", escape_double = FALSE, trim_ws = TRUE)
+rm(list=ls())
+
+cancer <- read.csv(file="dataset/cancer.csv", header=TRUE, sep=";")
 cancer <- cancer[order(cancer$Idade),]
-cancer.idoso <- 
 
 a <- cancer[-seq_len(191), ]$N
 
@@ -201,37 +179,66 @@ a.n <- nrow (a)
 
 # Igual contra diferente
 t.test(a, alternative = "greater", mu = 15, conf.level = 0.95) 
+
+paste ("pValor < 0.05, portanto rejeitamos H0 e aceitamos que a média dos idosos é maior que 15.")
 ```
-*C)* Considerando agora o grupo de pacientes mais jovens, verifique se a média populacional para N é menor do que 15. Obtenha o nível descritivo e conclua ao nível de 5%.
-```{R}
-cancer <- read_delim("dataset/cancer.csv", ";", escape_double = FALSE, trim_ws = TRUE)
+*c)* Considerando agora o grupo de pacientes mais jovens, verifique se a média populacional para N é menor do que 15. Obtenha o nível descritivo e conclua ao nível de 5%.
+```{r}
+rm(list=ls())
+
+cancer <- read.csv(file="dataset/cancer.csv", header=TRUE, sep=";")
 cancer <- cancer[order(cancer$Idade),]
 
 a <- cancer[seq_len(191), ]$N
 
 a.m <- mean(a)
-a.sd <-   sd (a)
+a.sd <- sd (a)
 a.n <- nrow (a)
 
 # Igual contra diferente
 t.test(a, alternative = "less", mu = 15, conf.level = 0.95) 
-```
-*D)* Construa intervalos de confiança para a média populacional da variável N para os dois grupos com 95% de confiança. Compare os intervalos.
-```{R}
-cancer <- read_delim("dataset/cancer.csv", ";", escape_double = FALSE, trim_ws = TRUE)
-cancer <- cancer[order(cancer$Idade),]
 
-a <- cancer$N
+paste ("pValor < 0.05, portanto rejeitamos H0 e aceitamos que a média dos jovens é menor que 15.")
+
+```
+*d)* Construa intervalos de confiança para a média populacional da variável N para os dois grupos com 95% de confiança. Compare os intervalos.
+```{r}
+rm(list=ls())
+
+cancer <- read.csv(file="dataset/cancer.csv", header=TRUE, sep=";")
+cancer <- cancer[order(cancer$Idade),]
+a <- cancer[seq_len(191), ]$N
 
 a.m <- mean(a)
 a.sd <- sd (a)
 a.n <- length (a)
+alpha  <- 0.025
 
-c(a.m-qnorm(0.95,a.m,a.sd/sqrt(a.n)), a.m+qnorm(0.95,a.m,a.sd/sqrt(a.n)))
+inteval_jovem = c(a.m - qt(1- alpha , df = a.n-1 ) * a.sd /sqrt(a.n), a.m + qt(1- alpha , df = a.n-1 ) * a.sd /sqrt(a.n))
+paste ("Intevalo dos jovens:",round(inteval_jovem[1],2),round(inteval_jovem[2],2))
+
+a <- cancer[-seq_len(191), ]$N
+
+a.m <- mean(a)
+a.sd <- sd (a)
+a.n <- length (a)
+alpha  <- 0.025
+
+inteval_idoso = c(a.m - qt(1- alpha , df = a.n-1 ) * a.sd /sqrt(a.n), a.m + qt(1- alpha , df = a.n-1 ) * a.sd /sqrt(a.n))
+paste ("Intevalo dos idosos:",round(inteval_idoso[1],2), round(inteval_idoso[2],2))
+
+comprimento_idoso = inteval_idoso[2] - inteval_idoso[1] 
+paste ("Comprimento do Intevalo dos idosos:", round (comprimento_idoso,2))
+
+comprimento_jovem = inteval_jovem[2] - inteval_jovem[1] 
+paste ("Comprimento do Intevalo dos jovens:",round (comprimento_jovem,2) )
+
+paste ("Não a intersecção entre os dois intervalos, além disso o comprimento do intervalo dos idosos é de quase 2x o dos jovens")
+
 ```
-*E)* Com base nos resultados do itens B e C, discuta o comportamento das médias da variável N para os dois grupos de pacientes.
+*e)* Com base nos resultados do itens B e C, discuta o comportamento das médias da variável N para os dois grupos de pacientes.
 ```{R}
-paste("Podemoos constatar que o comportamento é distinto para as amostras contudo, e que a região critica entre elas beira os 17")
+paste("Na amostra, a concentração da ureia é em média 4 unidades maior nos pacientes idosos, além disso podemos constatar que a variância nos valores coletados é maior nos pacientes idosos.")
 ```
 
 **Exercício 14 (Computacional):** Um criador tem constatado uma proporção de 10% do rebanho com verminose. O veterinário alterou a dieta dos animais e acredita que a doença diminuiu de intensidade. Um exame de 100 cabeças do rebanho, escolhidas ao acaso, indicou 8 delas com verminose. Ao nível de 5%, há indícios de que a proporção diminuiu?
@@ -241,8 +248,8 @@ paste("Podemoos constatar que o comportamento é distinto para as amostras contu
 # n: n?mero de realiza??es da amostra
 # p: probabilidade de sucesso a ser testada
 # alternative: two.sided, less ou greater
-prop.test(x = 8, n= 100, p = 0.1, alternative = "two.sided", correct = F, conf.level = 0.95) 
+prop.test(x = 8, n= 100, p = 0.1, alternative = "less", correct = F, conf.level = 0.95) 
 ```
 ```{R}
-paste("Há um pequeno indicio de que a doença diminuiu.")
+paste("pValor > 0,05, portanto, não rejeitamos H0 e aceitamos que a proporção é de 10%.")
 ```

@@ -1,0 +1,291 @@
+---
+output: 
+  html_notebook: 
+    code_folding: hide
+title:  "Entrega de Exercícios Inferência"
+author: "Leandro Sampaio Silva"
+---
+[Inferencia - Testes de Hipoteses](https://1drv.ms/b/s!AjhHHIPrrq6S7G_iZg3rtdPNxIfk)
+[Misc](https://www.youtube.com/user/ecograd/videos)
+
+# Agora faca voce mesmo
+Usando somente as fun??es: `shapiro.test()`, `bartlett.test()` e `t.test()`, avalie se ha diferenca significativa entre as medias do comprimento de petalas entre as especies `setosa` e `virginica` quanto ao comprimento de suas petalas
+
+```{r}
+data("iris")
+setosa <-iris$Petal.Length[iris$Species=='setosa'] 
+
+virgin <-iris$Petal.Length[iris$Species=='virginica']  
+
+flores <- data.frame(petalas = c(setosa, virgin),
+                     especies = c(rep('setosa',50), rep('virginica', 50)))
+```
+
+Lembre-se dos passos a serem realizados para um teste t:
+
+(i) Estabelecer hipoteses nula e alternativa;
+
+H0: ---
+$$H_{0}: \overline{X}_{virginica} <> \overline{X}_{setosa}$$
+```{r}
+paste
+```
+
+H1: ---
+$$H_{0}: \overline{X}_{virginica} == \overline{X}_{setosa}$$
+```{r}
+data("iris")
+setosa <-iris$Petal.Length[iris$Species=='setosa'] 
+
+virgin <-iris$Petal.Length[iris$Species=='virginica']  
+
+flores <- data.frame(petalas = c(setosa, virgin),
+                     especies = c(rep('setosa',50), rep('virginica', 50)))
+```
+
+
+(ii) Verificar pressupostos;
+- Independencia das observa??es
+
+- Normalidade
+
+```{r}
+shapiro.test(setosa)
+shapiro.test(virgin)
+```
+Sendo que o teste de Shapiro-Wilk tem como *H0: os dados seguem a distribuicao normal*.
+Tradicionalmente, consideramos como significativo, temos que a probabilidade erro tipo I aceita ($\alpha$) ? de 5%, e os nossos p-valores s?o superiores a esse valor (0.05 e 0.1), podemos afirmar que n?o podemos rejeitar a Hip?tese Nula, aceitando-a: **os nossos dados seguem a distribuicao**.
+
+(iii) Estabelecer signific?ncia do teste;
+- Homocedasticidade
+
+```{r}
+bartlett.test(petalas ~ especies, data = flores)
+```
+O p-valor foi de `r (bartlett.test(petalas ~ especies, data = flores))$p.value`, a probabilidade de erro tipo I. Como a nossa Hipotese Nula no teste de Bartlett são de que *as variancias sao iguais* e, tradicionalmente, *consideramos que valores abaixo de 5% de erro tipo I como significativo* suficiente (deveria ser abaixo de 5%), portanto, rejeitamos a nossa hip?tese nula e a aceitamos, concluindo que: **As vari?ncias entre os dois grupos sao diferentes iguais**.
+
+(iv) Calcular estat?stica do teste;
+```{r}
+resultado <- t.test(x = setosa,
+                    y = virgin)
+resultado
+```
+(v) Observa p-valor;
+
+Com p-valor < 0.05, logo, há diferençaa significativa entre as médias, onde a especie setosa apresenta uma media superior (5.55) a a especia virginica (1.46).
+
+(vi) Concluir;
+
+Podendo ser justicada pela diferenca entre o tamanho das petalas de ambas as especies;
+
+
+TESTE-T
+
+**Exercício 1**
+Um trabalhador, suspeitando que o preço dos estacionamentos na região em que trabalha é acima da média da região em que ele mora, resolveu avaliar se sua suspeita era verdadeira. Ele coletou informações do preço de meia diária (12 h) em cinco estacionamentos próximos a seu trabalho e em cinco estacionamentos próximos a sua residência. Os resultados estão apresentados na tabela abaixo. Com base nessas informações, determine se a suspeita do indivíduo é verdadeira ou não. Assuma um α = 2,5% e considere que a normalidade e a homogeneidade foram respeitadas. 
+
+```{r}
+rm(list=ls())
+#Custo do período de 12 h (em R$) 
+# pt = Proximo Trabalho
+# pr = Proximo Residencia
+
+# H0 = Hipotese Nula = xBarra_pt = xBarra_Xpr =
+# H1 = Hipotese Alternativa = xBarra_pt > xBarra_Xpr  -> xBarra_pt - xBarra_Xpr > 0
+pt = c (35.00,40.00,50.00,45.00,45.00)
+pr = c (25.00,18.00,30.00,20.00,25.00)
+
+paste ("pt =",pt)
+paste ("pr =",pr)
+
+paste ("m.pt =",(m.pt = mean(pt)))
+paste ("m.pr =",(m.pr = mean(pr)))
+paste ("s.pt =",(s.pt = sd(pt)))
+paste ("s.pr =",(s.pr = sd(pr)))
+paste ("n.pt =",(n.pt = length(pt)))
+paste ("n.pr =",(n.pr = length(pr)))
+paste ("gl ="  ,(gl = sum(n.pt,n.pr)-2))
+
+paste ("tCritico =",(tCritico = qt( p = (alpha = 0.025), gl, lower.tail = FALSE )))
+
+paste ("tCalculado =",(tCalculado = (m.pt - m.pr) / sqrt((s.pt/n.pt) + (s.pr/n.pr))))
+
+paste("Podemos rejeitar a hipotese nula, que o valor médio cobrado pelos estacionamentos da região onde trabalha é maior do que os da região onde ele reside, TCritico =", round(tCritico,2), "e TCalculado =", round(tCalculado,2))
+
+```
+
+**Exercício 2**
+Um dos estudos em psicologia social e educacional mais citados é de Rosenthal e Jacobson (1966), sobre como a expectativa dos professores pode influenciar o desempenho acadêmico das crianças. Rosenthal e Jacobson foram a uma escola básica e receberam a permissão de aplicar um teste de inteligência em todas as crianças. O teste havia sido desenvolvido recentemente e se baseava em uma inteligência não verbal que nenhum dos estudantes ou professores teria provavelmente visto antes. Assim, os pesquisadores foram capazes de criar expectativas nos professores, principalmente ao informar-lhes (erroneamente e de propósito) que o novo teste era “um teste para o desabrochar da inteligência”. Os pesquisadores selecionaram aleatoriamente alguns alunos e informaram aos professores que aqueles haviam obtido desempenhos excepcionais no teste. Claramente, aqueles estudantes não haviam sido identificados com base em seus desempenhos reais. Em outras palavras, eles conduziram um experimento para testar as expectativas dos professores. 
+
+Oito meses depois, retornaram e administraram o mesmo teste novamente em todas as salas de aula. Sem grandes surpresas, a maioria das crianças apresentou um melhor desempenho nos testes, visto que completaram quase um ano de formação acadêmica. A pergunta principal, é claro, era se as crianças que haviam sido previamente rotuladas como “potencialmente inteligentes” apresentariam aumentos de desempenho ainda maiores do que as demais crianças (que não haviam sido rotuladas). A tabela abaixo apresenta informações resumidas de parte dos dados desse trabalho. Com base nessas informações, determine se as crianças rotuladas apresentaram um desempenho melhor do que as crianças não rotuladas. Assuma um α = 2,5% e considere que a normalidade e a homogeneidade foram respeitadas
+
+```{r}
+rm(list=ls())
+#Custo do período de 12 h (em R$) 
+# x1 = Crianca Rotulada - SIM
+# x2 = Crianca Rotulada - NAO
+
+#criancaRotulada     N   MédiaDoDesempenho DesvioPadrão 
+#Não                 19  12.00               16.39
+#Sim                 11  27.36               12.57 
+
+# H0 = Hipotese Nula = xBarra_x1 == xBarra_x2 
+# H1 = Hipotese Alternativa = xBarra_x1 > xBarra_x2  -> xBarra_x1 - xBarra_x2  > 0
+paste ("m.x1 =",(m.x1 = 27.36))
+paste ("s.x1 =",(m.x2 = 12.00))
+paste ("s.x1 =",(s.x1 = 12.57))
+paste ("s.x2 =",(s.x2 = 16.39))
+paste ("n.x1 =",(n.x1 = 11))
+paste ("n.x2 =",(n.x2 = 19))
+
+paste ("gl",(gl = sum(n.x1,n.x2)-2))
+
+paste ("tCritico",(tCritico = qt( p = (alpha = 0.025), gl, lower.tail = FALSE )))
+
+paste ("tCalculado",(tCalculado = (m.x1 - m.x2) / sqrt((s.x1/n.x1) + (s.x2/n.x2))))
+
+paste("Podemos rejeitar a hipotese nula, os alunos rotulados não tiveram um desempenho melhor que os demais alunos, TCritico =", round(tCritico,2), "e TCalculado =", round(tCalculado,2))
+
+```
+
+**Exercício 2**
+Dois laboratórios determinaram a quantidade de cloro das mesmas amostras de água retiradas da rede de abastecimento de uma cidade. Com base nessas informações, há evidências suficientes para afirmar que existem diferenças significativas entre as medições realizadas pelos dois laboratórios? Assuma um α = 1% e considere que a normalidade foi respeitada. 
+
+```{r}
+rm(list=ls())
+#Custo do período de 12 h (em R$) 
+#Laboratório 
+#Amostra A    B 
+#1       1.15 1.00 
+#2       1.86 1.90 
+#3       0.75 0.90 
+#4       1.82 1.80 
+#5       1.14 1.20 
+#6       1.65 1.70 
+#7       1.90 1.95 
+
+# H0 = Hipotese Nula = xBarra_pt = xBarra_Xpr =
+# H1 = Hipotese Alternativa = xBarra_pt > xBarra_Xpr  -> xBarra_pt - xBarra_Xpr > 0
+a = c (1.15,1.86,0.75,1.82,1.14,1.90)
+b = c (1.0,1.90,0.90,1.80,1.20,1.70,1.95)
+
+paste ("m.a =",(m.a = mean(a)))
+paste ("m.b =",(m.b = mean(b)))
+paste ("s.a =",(s.a = sd(a)))
+paste ("s.b =",(s.b = sd(b)))
+paste ("n.a =",(n.a = length(a)))
+paste ("n.b =",(n.b = length(b)))
+paste ("gl =" ,(gl = sum(n.a,n.b)-2))
+
+paste ("tCritico",(tCritico = qt( p = (alpha = 0.001), gl, lower.tail = FALSE )))
+
+paste ("tCalculado",(tCalculado = (m.x1 - m.x2) / sqrt((s.x1/n.x1) + (s.x2/n.x2))))
+
+paste("Podemos rejeitar a hipotese nula, há evidências suficientes para afirmar que existem diferenças significativas entre as medições, TCritico =", round(tCritico,2), "e TCalculado =", round(tCalculado,2))
+
+```
+
+TESTE Q-QUADRADO
+
+**Exercício 2**
+Deseja-se verificar se o número de acidentes em uma estrada muda conforme o dia da semana. O número de acidentes observado para cada dia, de uma semana escolhida aleatoriamente, foi de: (Considere um α = 0,05.) 
+
+```{r}
+rm(list=ls())
+#Dia da semana Número de acidentes 
+#Segunda  20
+#Terça    10 
+#Quarta   10
+#Quinta   15
+#Sexta    30
+#Sábado   20
+#Domingo  35
+
+# H0 = Hipotese Nula = xBarra_pt = xBarra_Xpr =
+# H1 = Hipotese Alternativa = xBarra_pt > xBarra_Xpr  -> xBarra_pt - xBarra_Xpr > 0
+
+paste ("obs",(obs.array = c(20,10,10,15,30,20,35)))
+paste ("obs.n",(obs.n = length(obs.array)))
+paste ("esp",(esp = mean(obs.array) ))
+xCalculado = 0
+    
+for (obs in obs.array){
+    xCalculado = xCalculado + (obs - esp)^2 /esp
+}
+
+paste("xCritico =",tCritico = qchisq(0.05, df= obs.n -1, lower.tail=TRUE))
+paste("xCalculado =",xCalculado)
+
+paste("Podemos rejeitar a hipotese nula, verificou-se que o número de acidentes em uma estrada muda conforme o dia da semana, xCritico =", round(xCritico,2), "e xCalculado =", round(xCalculado,2))
+``` 
+
+Chi Quadrado – Testes de Homogeneidade e de Independência 
+ 
+**Exercício 3**
+Um pesquisador resolveu avaliar se a droga Prozac (fluoxetina) apresentaria efeitos benéficos no tratamento da anorexia, em pacientes que sofrem desse distúrbio. O Prozac é um inibidor seletivo da recaptação de serotonina, utilizado normalmente para combater sintomas de depressão, pânico, ansiedade, e sintomas obsessivoscompulsivos. Após o tratamento, observou-se se o quadro de anorexia seria superado (Sucesso), ou se haveria reincidência do distúrbio alimentar (Falha). Com base nos resultados abaixo, justifique se há associação entre o tipo de tratamento e a permanência do distúrbio alimentar. Considere um α = 0,05. 
+
+```{r}
+rm(list=ls())
+#Anorexia
+#Droga   Sucesso Falha  Total
+#Prozac  13      36     49 
+#Placebo 14      30     44
+#Total   27      66     93
+
+#H0: Hipotese Nula: o comportamento da variável é homogêneo nas subpopulações
+#H1: Hipotese Alternativa: o comportamento da variável não é homogêneo nas subpopulações
+
+tb <- matrix(c(13,36,14,30),ncol=2,byrow=TRUE)
+colnames(tb) <- c("Sucesso","Falha")
+rownames(tb) <- c("Prozac","Placebo")
+tb <- as.table(tb)
+
+summary(tb)
+
+xCritico <- summary(tb)$statistic
+xCalculado <- qchisq(0.05, df= gl, lower.tail=TRUE)
+
+#margin.table(tb,1)
+#prop.table(tb,1)
+
+cols <- 2
+lins <- 2
+gl <- (cols -1) * (lins -1)
+
+paste("Podemos rejeitar a hipotese nula, há associação entre o tipo de tratamento e a permanência do distúrbio alimentar, xCritico =", round(xCritico,2), "e xCalculado =", round(xCalculado,2))
+```
+
+
+
+**Exercício 4**
+Um amante dos Três Patetas resolveu contar e dividir em categorias o número de tapas na cara sofrido por cada um dos Patetas ao longo de 199 episódios, originalmente criados para a televisão. Existe associação entre o número de tapas sofridos e quem o sofreu? Considere um α = 0,05. Os resultados dessa análise estão apresentados na tabela a seguir: 
+
+```{r}
+rm(list=ls())
+#Pateta que recebeu o tapa 
+#Número de tapas Curly Shemp Joe
+#0 a 10 tapas    49  34 10
+#11 a 20 tapas   36 21 5 
+#21 a 30 tapas   7 14 5
+#Mais de 31 tapas 5 8 5 
+tb <- matrix(c(49,34,10,36,21,5,7,14,5,5,8,5),ncol=3,byrow=TRUE)
+colnames(tb) <- c("Curly","Shemp","Joe")
+rownames(tb) <- c("0 a 10 tapas","11 a 20 tapas", "21 a 30 tapas", "Mais de 31 tapas")
+tb <- as.table(tb)
+
+summary(tb)
+
+cols <- 3
+lins <- 4
+
+gl <- (cols -1) * (lins -1)
+
+xCritico <- summary(tb)$statistic
+xCalculado <- qchisq(0.05, df= gl, lower.tail=TRUE)
+
+paste("Podemos rejeitar a hipotese nula, existe associação entre o número de tapas sofridos e quem o sofreu, xCritico =", round(xCritico,2), "e xCalculado =", round(xCalculado,2))
+
+```
+
+
+
