@@ -1,0 +1,203 @@
+---
+title: "Avaliação Individual - Inferencia Estatística IV"
+author: "COLOQUE O SEU NOME AQUI"
+date: "15 de julho de 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+    Não se esqueça de colocar o seu nome no cabeçalho desse arquivo. Esse arquivo pode ser enviado ao meu email até a próxima aula do próximo módulo.
+    Boa Prova!
+
+## Objetivos
+
+O seu papel nesta **avaliação** é avaliar e verificar os pressupostos dos modelos usando os seguintes processos no <span style="color:blue; font-size:22px">R</span>
+
+1. Construa os modelos lineares simples:
+  - Construa um modelo linear de $y$ em relação a $x$, usando a função `lm()`, com os objetos `y1`, `y2` e `y3` em relação ao objeto `x`. Atribua o resultado a um objeto chamado `modelo`.
+
+2. Interprete o modelo construído.
+  - Veja o resumo do modelo usando a função `summary()` e interprete:
+    - O intercepto é significativo (é diferente de zero)? Qual é o valor?
+    - A inclinação tem um valor diferente de zero (é significativo)? Qual é o valor?
+    - Qual é o ajuste do modelo ($R^2$)? Interprete.
+    
+3. Teste a normalidade dos resíduos com o teste de Shapiro-Wilk:
+  - Para isso utilize a função `shapiro.test()` no objeto originado da extração dos resíduos do modelo linear, usando a função `residuals()`: `shapiro.test(residuals(modelo))`;
+  - Interprete os resultados.
+  
+4. Verifique os pressupostos do modelo através de diagnóstico gráfico
+  - Peça ao <span style="color:blue; font-size:22px">R</span> mudar o parâmetro de números de gráficos por área, para assim visualizar os 4 gráficos de diagnóstico do modelo ao mesmo tempo: `par(mfrow=c(2,2)`;
+  - Coloque os gráficos de diagnóstico usando a função `plot()`: `plot(modelo)`;
+  - Interprete os resultados.
+
+
+## Carregamento dos dados
+
+Os dados a seguir são artificiais e serão utilizados para serem construídos três modelos de Regressão Linear Simples:
+
+A) `modelo_1`: `y1~x`
+
+B) `modelo_2`: `y2~x`
+
+C) `modelo_3`: `y3~x`
+
+```{r}
+x<-c(108.47,108.48,109.05,110.96,112.88,115.09,115.82,116.13,116.80,118.17,118.29,120.44,120.87,121.54,122.62,123.24,125.12,125.53,126.93,127.37,127.44,127.72,128.45,128.73,129.80,129.84,130.09,131.45,132.19,132.85,133.09,134.51,134.62,135.16,135.58,137.31,139.23,140.44,141.63,142.73,142.79,144.01,144.28,145.42,145.44,146.01,146.09,148.09,154.06,156.25)
+
+y1 <- c(1926.3721,1845.5515,1836.9980,1814.8805,1818.7962,1804.6096,1799.2322,1831.1906,1785.4772,1816.7777,1724.7038,1672.9853,1686.6314,1757.8150,1657.6412,1564.5890,1598.9946,1723.5855,1542.1951,1598.8229,1559.7419,1571.9879,1526.9370,1404.5772,1483.3856,1585.6335,1441.7037,1609.2995,1533.9665,1365.9530,1517.2563,1236.0364,1496.6813,1362.1404,1440.2983,1309.6284,1249.1757,1255.1477,1183.9964,1171.6898,1203.4191,1146.1817,1187.4105,1030.8754,1077.6073,1125.5328,1091.1814,1013.9322,798.4727,759.3948)
+
+y2 <- c(4253.423,4097.481,4242.749,4454.144,4435.041,4665.087,4462.745,4543.369,4344.700,4545.284,4514.208,4557.666,4683.720,4841.999,4814.493,4677.904,4703.944,4839.280,4658.370,4762.315,4863.913,5004.870,4789.697,4917.050,4960.285,4767.971,4887.572,4954.036,4916.751,5005.066,4943.923,5060.897,4951.924,4928.904,5290.459,4913.642,5108.266,5047.120,5202.368,5278.046,5149.564,5446.231,5386.824,5328.349,5193.366,5207.665,5474.012,5611.254,5469.710,5677.621)
+
+y3 <- c(63.06316,61.44416,62.40146,62.46696,65.40710,73.91662,68.65933,79.84460,66.29297,68.79075,66.67182,72.32049,75.87358,70.13380,74.51058,69.67153,70.10120,80.35990,76.50786,72.05668,69.05673,75.02676,73.19806,75.10544,84.71027,74.82630,81.19418,72.50786,78.31355,77.92982,72.34656,80.75272,75.99446,77.68365,72.13723,72.79462,80.40959,81.88024,89.16389,80.91984,73.90764,80.15612,91.99874,76.81634,82.61463,84.67476,78.22375,82.27569,85.84750,87.58806)
+```
+
+## 1. Construção os modelos:
+
+### A) Modelo y1 ~ x
+Nesse primeiro já está pronto:
+
+```{r}
+modelo_1 <- lm(y1 ~ x)
+```
+
+### B) Modelo y2 ~ x 
+
+Complete a seguir:
+
+```{r}
+modelo_2 <- lm( ** ~ ** ) # Substitua os asteriscos **
+```
+
+### C) Modelo y3 ~ x
+
+Faça você mesmo a construção do modelo com a função `lm()`:
+
+```{r}
+modelo_3 <- # Coloque o comando aqui
+```
+
+## 2. Interpretação dos modelos construídos:
+
+### A) Veja o resultado do `modelo_1`
+
+A linha de comando já está feita a seguir:
+```{r}
+
+summary(modelo_1)
+
+```
+
+#### Qual o valor Intercepto? Ele é significativo? Interprete o resultado.
+
+**R:** *coloque a sua resposta aqui*
+
+#### Qual é o valor do coeficiente angular? Ele é significativo? Interprete o resultado.
+
+**R:** *coloque a sua resposta aqui*
+
+#### Qual é o valor do coeficiente de determinação ($R^2$) do modelo? Interprete o resultado.
+
+**R:** *coloque a sua resposta aqui*
+
+
+### B) Veja o resultado do `modelo_2`
+
+Complete a linha de comando a seguir:
+```{r}
+summary(**) # Substitua os asteriscos **
+```
+
+### C) Veja o resultado do `modelo_3`
+
+Faça você mesmo agora o comando necessário para ver o resultado do modelo:
+```{r}
+# coloque o comando aqui
+```
+
+#### Qual o valor Intercepto? Ele é significativo? Interprete o resultado.
+
+**R:** *coloque a sua resposta aqui*
+
+#### Qual é o valor do coeficiente angular? Ele é significativo? Interprete o resultado.
+
+**R:** *coloque a sua resposta aqui*
+
+#### Qual é o valor do coeficiente de determinação ($R^2$) do modelo? Interprete o resultado.
+
+**R:** *coloque a sua resposta aqui*
+
+## 3. Verifique a normalidade dos resíduos:
+
+### A) Para o `modelo_1` 
+
+```{r}
+shapiro.test(residuals(modelo_1))
+```
+
+##### Qual o resultado do teste? Interprete.
+
+**R:** *coloque a sua resposta aqui*
+
+### B) Para o `modelo_2` 
+
+```{r}
+shapiro.test(**) # Subsitua os asteriscos **
+```
+
+##### Qual o resultado do teste? Interprete.
+
+**R:** *coloque a sua resposta aqui*
+
+### C) Para o `modelo_3` 
+
+Escreva você mesmo todo o comando agora para executar um teste de Shapiro-Wilk com o terceiro modelo construído (`modelo_3`):
+
+```{r}
+# Coloque o comando aqui
+```
+
+##### Qual o resultado do teste? Interprete.
+
+**R:** *coloque a sua resposta aqui*
+
+## 4. Verifique visualmente e faça o diagnóstico dos modelos:
+
+### A) Para o `modelo_1` 
+O comando para fazer o diagnóstico gráfico do modelo já está escrito a seguir. Somente execute o comando e veja o resultado.
+
+```{r}
+par(mfrow=c(2,2))
+plot(modelo_1)
+```
+
+### B) Para o `modelo_2` 
+
+Complete os comandos a seguir e veja o resultado.
+
+```{r}
+par(mfrow=c(**)) # Subsitua os asteriscos **
+plot(**)         # Subsitua os asteriscos **
+```
+
+### C) Para o `modelo_3` 
+
+Faça você mesmo agora todos os comandos necessários e faça o diagnóstico gráfico do modelo:
+
+```{r}
+# Coloque o comando aqui
+# Coloque o comando aqui
+```
+
+## Conclusões
+
+### Quais dos modelos seguem e quais modelos não seguem os pressupostos de uma regressão linear simples? Explique quais pressupostos não foram cumpridos e em quais modelos. 
+
+**R:** *coloque a sua resposta aqui*
+
+### Você proporia alguma alternativa (outro teste) para a relação entre as variáveis mostradas? Qual seria? Explique.
+
+**R:** *coloque a sua resposta aqui*

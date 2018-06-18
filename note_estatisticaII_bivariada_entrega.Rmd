@@ -2,82 +2,9 @@
 output: 
   html_notebook: 
     code_folding: hide
-title:  "Entrega de Exercícios Inferência"
+title:  "Entrega de Exercícios Bivariada"
 author: "Leandro Sampaio Silva"
 ---
-[Inferencia - Testes de Hipoteses](https://1drv.ms/b/s!AjhHHIPrrq6S7G_iZg3rtdPNxIfk)
-[Misc](https://www.youtube.com/user/ecograd/videos)
-
-# Agora faca voce mesmo
-Usando somente as fun??es: `shapiro.test()`, `bartlett.test()` e `t.test()`, avalie se ha diferenca significativa entre as medias do comprimento de petalas entre as especies `setosa` e `virginica` quanto ao comprimento de suas petalas
-
-```{r}
-data("iris")
-setosa <-iris$Petal.Length[iris$Species=='setosa'] 
-
-virgin <-iris$Petal.Length[iris$Species=='virginica']  
-
-flores <- data.frame(petalas = c(setosa, virgin),
-                     especies = c(rep('setosa',50), rep('virginica', 50)))
-```
-
-Lembre-se dos passos a serem realizados para um teste t:
-
-(i) Estabelecer hipoteses nula e alternativa;
-
-H0: ---
-$$H_{0}: \overline{X}_{virginica} <> \overline{X}_{setosa}$$
-```{r}
-paste
-```
-
-H1: ---
-$$H_{0}: \overline{X}_{virginica} == \overline{X}_{setosa}$$
-```{r}
-data("iris")
-setosa <-iris$Petal.Length[iris$Species=='setosa'] 
-
-virgin <-iris$Petal.Length[iris$Species=='virginica']  
-
-flores <- data.frame(petalas = c(setosa, virgin),
-                     especies = c(rep('setosa',50), rep('virginica', 50)))
-```
-
-
-(ii) Verificar pressupostos;
-- Independencia das observa??es
-
-- Normalidade
-
-```{r}
-shapiro.test(setosa)
-shapiro.test(virgin)
-```
-Sendo que o teste de Shapiro-Wilk tem como *H0: os dados seguem a distribuicao normal*.
-Tradicionalmente, consideramos como significativo, temos que a probabilidade erro tipo I aceita ($\alpha$) ? de 5%, e os nossos p-valores s?o superiores a esse valor (0.05 e 0.1), podemos afirmar que n?o podemos rejeitar a Hip?tese Nula, aceitando-a: **os nossos dados seguem a distribuicao**.
-
-(iii) Estabelecer signific?ncia do teste;
-- Homocedasticidade
-
-```{r}
-bartlett.test(petalas ~ especies, data = flores)
-```
-O p-valor foi de `r (bartlett.test(petalas ~ especies, data = flores))$p.value`, a probabilidade de erro tipo I. Como a nossa Hipotese Nula no teste de Bartlett são de que *as variancias sao iguais* e, tradicionalmente, *consideramos que valores abaixo de 5% de erro tipo I como significativo* suficiente (deveria ser abaixo de 5%), portanto, rejeitamos a nossa hip?tese nula e a aceitamos, concluindo que: **As vari?ncias entre os dois grupos sao diferentes iguais**.
-
-(iv) Calcular estat?stica do teste;
-```{r}
-resultado <- t.test(x = setosa,
-                    y = virgin)
-resultado
-```
-(v) Observa p-valor;
-
-Com p-valor < 0.05, logo, há diferençaa significativa entre as médias, onde a especie setosa apresenta uma media superior (5.55) a a especia virginica (1.46).
-
-(vi) Concluir;
-
-Podendo ser justicada pela diferenca entre o tamanho das petalas de ambas as especies;
-
 
 TESTE-T
 
@@ -111,7 +38,6 @@ paste ("tCritico =",(tCritico = qt( p = (alpha = 0.025), gl, lower.tail = FALSE 
 paste ("tCalculado =",(tCalculado = (m.pt - m.pr) / sqrt((s.pt/n.pt) + (s.pr/n.pr))))
 
 paste("Podemos rejeitar a hipotese nula, que o valor médio cobrado pelos estacionamentos da região onde trabalha é maior do que os da região onde ele reside, TCritico =", round(tCritico,2), "e TCalculado =", round(tCalculado,2))
-
 ```
 
 **Exercício 2**
@@ -287,5 +213,73 @@ paste("Podemos rejeitar a hipotese nula, existe associação entre o número de 
 
 ```
 
+# AGORA FACA VOCE MESMO
+Usando somente as fun??es: `shapiro.test()`, `bartlett.test()` e `t.test()`, avalie se ha diferenca significativa entre as medias do comprimento de petalas entre as especies `setosa` e `virginica` quanto ao comprimento de suas petalas
 
+```{r}
+data("iris")
+setosa <-iris$Petal.Length[iris$Species=='setosa'] 
+
+virgin <-iris$Petal.Length[iris$Species=='virginica']  
+
+flores <- data.frame(petalas = c(setosa, virgin),
+                     especies = c(rep('setosa',50), rep('virginica', 50)))
+```
+
+Lembre-se dos passos a serem realizados para um teste t:
+
+(i) Estabelecer hipoteses nula e alternativa;
+
+H0: ---
+$$H_{0}: \overline{X}_{virginica} <> \overline{X}_{setosa}$$
+```{r}
+paste("")
+```
+
+H1: ---
+$$H_{0}: \overline{X}_{virginica} == \overline{X}_{setosa}$$
+```{r}
+data("iris")
+setosa <-iris$Petal.Length[iris$Species=='setosa'] 
+
+virgin <-iris$Petal.Length[iris$Species=='virginica']  
+
+flores <- data.frame(petalas = c(setosa, virgin),
+                     especies = c(rep('setosa',50), rep('virginica', 50)))
+```
+
+
+(ii) Verificar pressupostos;
+- Independencia das observa??es
+
+- Normalidade
+
+```{r}
+shapiro.test(setosa)
+shapiro.test(virgin)
+```
+Sendo que o teste de Shapiro-Wilk tem como *H0: os dados seguem a distribuicao normal*.
+Tradicionalmente, consideramos como significativo, temos que a probabilidade erro tipo I aceita ($\alpha$) ? de 5%, e os nossos p-valores s?o superiores a esse valor (0.05 e 0.1), podemos afirmar que n?o podemos rejeitar a Hip?tese Nula, aceitando-a: **os nossos dados seguem a distribuicao**.
+
+(iii) Estabelecer signific?ncia do teste;
+- Homocedasticidade
+
+```{r}
+bartlett.test(petalas ~ especies, data = flores)
+```
+O p-valor foi de `r (bartlett.test(petalas ~ especies, data = flores))$p.value`, a probabilidade de erro tipo I. Como a nossa Hipotese Nula no teste de Bartlett são de que *as variancias sao iguais* e, tradicionalmente, *consideramos que valores abaixo de 5% de erro tipo I como significativo* suficiente (deveria ser abaixo de 5%), portanto, rejeitamos a nossa hip?tese nula e a aceitamos, concluindo que: **As vari?ncias entre os dois grupos sao diferentes iguais**.
+
+(iv) Calcular estat?stica do teste;
+```{r}
+resultado <- t.test(x = setosa,
+                    y = virgin)
+resultado
+```
+(v) Observa p-valor;
+
+Com p-valor < 0.05, logo, há diferençaa significativa entre as médias, onde a especie setosa apresenta uma media superior (5.55) a a especia virginica (1.46).
+
+(vi) Concluir;
+
+Podendo ser justicada pela diferenca entre o tamanho das petalas de ambas as especies;
 

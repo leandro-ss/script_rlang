@@ -1,0 +1,43 @@
+---
+title: "pokemon"
+author: "Leandro Sampaio"
+date: "June 9, 2018"
+output: pdf_document
+---
+
+```{r setup, tidyverse, magrittr, ggcorrplot, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## R Markdown
+
+*This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.*
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r readr,include=FALSE}
+
+pokemon <- read_csv("dataset/pokemon.csv")
+colnames(pokemon)[1] <- "No"
+colnames(pokemon)[3] <- "Type1"
+colnames(pokemon)[4] <- "Type2"
+colnames(pokemon)[8] <- "SpAtk"
+colnames(pokemon)[9] <- "SpDef"
+head(pokemon)
+
+names(pokemon) <- tolower(names(pokemon))
+pokemon$generation <- factor(pokemon$generation, levels = c(6,5,4,3,2,1))
+pokemon <- pokemon[pokemon$generation == 1 || pokemon$generation == 2 ]
+pokemon
+```
+
+## Including Plots
+
+```{r pressure, echo=FALSE}
+summary(pokemon)
+```
+*Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.*
+
+We use the `aes` attribute to provide mappings for aesthetics. Note, this is required for all ggplot graphs.
+```{r}
+pokemon %>% ggplot(aes(x= type1, fill = generation)) + geom_bar() + coord_flip()
+```
