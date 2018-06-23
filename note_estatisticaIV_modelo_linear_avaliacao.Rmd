@@ -1,6 +1,6 @@
 ---
-title: "Avaliação Individual - Inferencia Estatística IV"
-author: "COLOQUE O SEU NOME AQUI"
+title: "AvaliaÃ§Ã£o Individual - Inferencia Estatistica IV"
+author: "Leandro Sampaio"
 date: "15 de julho de 2018"
 output: html_document
 ---
@@ -9,35 +9,32 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-    Não se esqueça de colocar o seu nome no cabeçalho desse arquivo. Esse arquivo pode ser enviado ao meu email até a próxima aula do próximo módulo.
-    Boa Prova!
-
 ## Objetivos
 
-O seu papel nesta **avaliação** é avaliar e verificar os pressupostos dos modelos usando os seguintes processos no <span style="color:blue; font-size:22px">R</span>
+O seu papel nesta **avaliaÃ§Ã£o**? avaliar e verificar os pressupostos dos modelos usando os seguintes processos no <span style="color:blue; font-size:22px">R</span>
 
 1. Construa os modelos lineares simples:
-  - Construa um modelo linear de $y$ em relação a $x$, usando a função `lm()`, com os objetos `y1`, `y2` e `y3` em relação ao objeto `x`. Atribua o resultado a um objeto chamado `modelo`.
+  - Construa um modelo linear de $y$ em relaÃ§Ã£o a $x$, usando a funÃ§Ã£o `lm()`, com os objetos `y1`, `y2` e `y3` em relaÃ§Ã£o ao objeto `x`. Atribua o resultado a um objeto chamado `modelo`.
 
-2. Interprete o modelo construído.
-  - Veja o resumo do modelo usando a função `summary()` e interprete:
-    - O intercepto é significativo (é diferente de zero)? Qual é o valor?
-    - A inclinação tem um valor diferente de zero (é significativo)? Qual é o valor?
-    - Qual é o ajuste do modelo ($R^2$)? Interprete.
+2. Interprete o modelo construÃ­do.
+  - Veja o resumo do modelo usando a funÃ§Ã£o `summary()` e interprete:
+    - O intercepto Ã© significativo (Ã© diferente de zero)? Qual Ã© o valor?
+    - A inclinaÃ§Ã£o tem um valor diferente de zero (Ã© significativo)? Qual Ã© o valor?
+    - Qual Ã© o ajuste do modelo ($R^2$)? Interprete.
     
-3. Teste a normalidade dos resíduos com o teste de Shapiro-Wilk:
-  - Para isso utilize a função `shapiro.test()` no objeto originado da extração dos resíduos do modelo linear, usando a função `residuals()`: `shapiro.test(residuals(modelo))`;
+3. Teste a normalidade dos resÃ­duos com o teste de Shapiro-Wilk:
+  - Para isso utilize a funÃ§Ã£o `shapiro.test()` no objeto originado da extraÃ§Ã£o dos resÃ­duos do modelo linear, usando a funÃ§Ã£o `residuals()`: `shapiro.test(residuals(modelo))`;
   - Interprete os resultados.
   
-4. Verifique os pressupostos do modelo através de diagnóstico gráfico
-  - Peça ao <span style="color:blue; font-size:22px">R</span> mudar o parâmetro de números de gráficos por área, para assim visualizar os 4 gráficos de diagnóstico do modelo ao mesmo tempo: `par(mfrow=c(2,2)`;
-  - Coloque os gráficos de diagnóstico usando a função `plot()`: `plot(modelo)`;
+4. Verifique os pressupostos do modelo atrav?s de diagn?stico gr?fico
+  - Pe?a ao <span style="color:blue; font-size:22px">R</span> mudar o par?metro de n?meros de gr?ficos por ?rea, para assim visualizar os 4 gr?ficos de diagn?stico do modelo ao mesmo tempo: `par(mfrow=c(2,2)`;
+  - Coloque os gr?ficos de diagn?stico usando a fun??o `plot()`: `plot(modelo)`;
   - Interprete os resultados.
 
 
 ## Carregamento dos dados
 
-Os dados a seguir são artificiais e serão utilizados para serem construídos três modelos de Regressão Linear Simples:
+Os dados a seguir sÃ£o artificiais e serÃ£o utilizados para serem construÃ­dos trÃªs modelos de RegressÃ£o Linear Simples:
 
 A) `modelo_1`: `y1~x`
 
@@ -55,121 +52,135 @@ y2 <- c(4253.423,4097.481,4242.749,4454.144,4435.041,4665.087,4462.745,4543.369,
 y3 <- c(63.06316,61.44416,62.40146,62.46696,65.40710,73.91662,68.65933,79.84460,66.29297,68.79075,66.67182,72.32049,75.87358,70.13380,74.51058,69.67153,70.10120,80.35990,76.50786,72.05668,69.05673,75.02676,73.19806,75.10544,84.71027,74.82630,81.19418,72.50786,78.31355,77.92982,72.34656,80.75272,75.99446,77.68365,72.13723,72.79462,80.40959,81.88024,89.16389,80.91984,73.90764,80.15612,91.99874,76.81634,82.61463,84.67476,78.22375,82.27569,85.84750,87.58806)
 ```
 
-## 1. Construção os modelos:
+## 1. Construa os modelos:
 
 ### A) Modelo y1 ~ x
-Nesse primeiro já está pronto:
+Nesse primeiro jÃ¡ estÃ¡ pronto:
 
 ```{r}
 modelo_1 <- lm(y1 ~ x)
 ```
 
 ### B) Modelo y2 ~ x 
-
 Complete a seguir:
 
-```{r}
-modelo_2 <- lm( ** ~ ** ) # Substitua os asteriscos **
+```{r echo=FALSE}
+# FEITO
+modelo_2 <- lm( y2 ~ x ) # Substitua os asteriscos **
 ```
 
 ### C) Modelo y3 ~ x
 
-Faça você mesmo a construção do modelo com a função `lm()`:
+FaÃ§a vocÃª mesmo a construÃ§Ã£o do modelo com a funÃ§Ã£o `lm()`:
 
 ```{r}
-modelo_3 <- # Coloque o comando aqui
+# modelo_3 <- # Coloque o comando aqui
+# FEITO
+modelo_3 <- lm( y3 ~ x )
 ```
 
-## 2. Interpretação dos modelos construídos:
+## 2. InterpretaÃ§Ã£o dos modelos construÃ­dos:
 
 ### A) Veja o resultado do `modelo_1`
 
-A linha de comando já está feita a seguir:
+A linha de comando j? est? feita a seguir:
 ```{r}
-
 summary(modelo_1)
-
+##plot(modelo_1)
 ```
 
-#### Qual o valor Intercepto? Ele é significativo? Interprete o resultado.
+#### Qual o valor Intercepto? Ele ? significativo? Interprete o resultado.
 
-**R:** *coloque a sua resposta aqui*
+**R:** *O valor estimado para o intercepto Ã© de 4469.061*
+**R:** *O p-valor do intercepto nÃ£o Ã© signicativo,*
+**R:** *portanto rejeitamos a hipotese nula, ou seja, o intercepto Ã© diferente de 0.*
 
-#### Qual é o valor do coeficiente angular? Ele é significativo? Interprete o resultado.
+#### Qual Ã© o valor do coeficiente angular? Ele Ã© significativo? Interprete o resultado.
 
-**R:** *coloque a sua resposta aqui*
+**R:** *O valor estimado para o coeficiente angular Ã© de -23.030*
+**R:** *O p-valor do coeficiente angular nÃ£o Ã© signicativo,*
+**R:** *portanto rejeitamos a hipotese nula, ou seja, existe uma inclinaÃ§Ã£o na reta.*
 
-#### Qual é o valor do coeficiente de determinação ($R^2$) do modelo? Interprete o resultado.
+#### Qual Ã© o valor do coeficiente de determinaÃ§Ã£o ($R^2$) do modelo? Interprete o resultado.
 
-**R:** *coloque a sua resposta aqui*
-
+**R:** *O valor do coeficiente de determinaÃ§Ã£o RÂ² Ã© de 0.9382, ou seja, o conjunto xy segue um modelo linear.*
 
 ### B) Veja o resultado do `modelo_2`
 
 Complete a linha de comando a seguir:
-```{r}
-summary(**) # Substitua os asteriscos **
+```{r message=FALSE, warning=FALSE, include=FALSE}
+# summary(**) # Substitua os asteriscos **
+summary(modelo_2)
 ```
 
 ### C) Veja o resultado do `modelo_3`
 
-Faça você mesmo agora o comando necessário para ver o resultado do modelo:
+FaÃ§a vocÃª mesmo agora o comando necessÃ¡rio para ver o resultado do modelo:
 ```{r}
 # coloque o comando aqui
+summary(modelo_3)
 ```
 
-#### Qual o valor Intercepto? Ele é significativo? Interprete o resultado.
+#### Qual o valor Intercepto? Ele Ã© significativo? Interprete o resultado.
 
-**R:** *coloque a sua resposta aqui*
+**R:** *O valor estimado para o intercepto Ã© de 14.856*
+**R:** *O p-valor do intercepto nÃ£o Ã© signicativo,*
+**R:** *portanto rejeitamos a hipotese nula, ou seja, o intercepto Ã© diferente de 0*
 
-#### Qual é o valor do coeficiente angular? Ele é significativo? Interprete o resultado.
+**R:** *contudo a afirmaÃ§Ã£o tem um poder estatistico inferior ao exibido no caso anterior.*
 
-**R:** *coloque a sua resposta aqui*
+#### Qual ? o valor do coeficiente angular? Ele ? significativo? Interprete o resultado.
 
-#### Qual é o valor do coeficiente de determinação ($R^2$) do modelo? Interprete o resultado.
+**R:** *O valor estimado para o coeficiente angular Ã© de 0.464*
+**R:** *O p-valor do coeficiente angular nÃ£o Ã© signicativo,*
+**R:** *portanto rejeitamos a hipotese nula, ou seja, existe uma inclinaÃ§Ã£o na reta*
 
-**R:** *coloque a sua resposta aqui*
+**R:** *apesar de possuir um grau de inclinaÃ§Ã£o prÃ³ximo de zero, o p-valor demonstra que nÃ£o hÃ¡ uma chance significativa da mesma ser igual a zero.*
 
-## 3. Verifique a normalidade dos resíduos:
+#### Qual ? o valor do coeficiente de determina??o ($R^2$) do modelo? Interprete o resultado.
+
+**R:** *O valor do coeficiente de determinaÃ§Ã£o RÂ² Ã© de 0.64, ou seja, o conjunto xy segue um modelo linear, contudo, tambÃ©m apresenta caracteristicas que nÃ£o sÃ£o explicadas pelo modelo.*
+
+## 3. Verifique a normalidade dos resÃ­duos:
 
 ### A) Para o `modelo_1` 
-
 ```{r}
 shapiro.test(residuals(modelo_1))
 ```
 
 ##### Qual o resultado do teste? Interprete.
 
-**R:** *coloque a sua resposta aqui*
+**R:** *Aceitamos a hipÃ³tese nula, os resÃ­duos seguem uma distribuiÃ§Ã£o normal*
 
 ### B) Para o `modelo_2` 
-
 ```{r}
-shapiro.test(**) # Subsitua os asteriscos **
+# shapiro.test(**) # Subsitua os asteriscos **
+shapiro.test(residuals(modelo_2))
 ```
 
 ##### Qual o resultado do teste? Interprete.
 
-**R:** *coloque a sua resposta aqui*
+**R:** *Aceitamos a hipÃ³tese nula, os resÃ­duos seguem uma distribuiÃ§Ã£o normal*
 
 ### C) Para o `modelo_3` 
 
-Escreva você mesmo todo o comando agora para executar um teste de Shapiro-Wilk com o terceiro modelo construído (`modelo_3`):
+Escreva voc? mesmo todo o comando agora para executar um teste de Shapiro-Wilk com o terceiro modelo constru?do (`modelo_3`):
 
 ```{r}
 # Coloque o comando aqui
+shapiro.test(residuals(modelo_3))
 ```
 
 ##### Qual o resultado do teste? Interprete.
 
-**R:** *coloque a sua resposta aqui*
+**R:** *Rejeitamos a hipÃ³tese nula, ou seja, os resÃ­duos nÃ£o seguem uma distribuiÃ§Ã£o normal*
 
-## 4. Verifique visualmente e faça o diagnóstico dos modelos:
+## 4. Verifique visualmente e faÃ§a o diagnÃ³stico dos modelos:
 
 ### A) Para o `modelo_1` 
-O comando para fazer o diagnóstico gráfico do modelo já está escrito a seguir. Somente execute o comando e veja o resultado.
+O comando para fazer o diagnÃ³stico grÃ¡fico do modelo j? estÃ¡ escrito a seguir. Somente execute o comando e veja o resultado.
 
-```{r}
+```{r }
 par(mfrow=c(2,2))
 plot(modelo_1)
 ```
@@ -178,26 +189,33 @@ plot(modelo_1)
 
 Complete os comandos a seguir e veja o resultado.
 
-```{r}
-par(mfrow=c(**)) # Subsitua os asteriscos **
-plot(**)         # Subsitua os asteriscos **
+```{r }
+par(mfrow=c(2,2))
+plot(modelo_2)
 ```
 
 ### C) Para o `modelo_3` 
 
-Faça você mesmo agora todos os comandos necessários e faça o diagnóstico gráfico do modelo:
+FaÃ§a vocÃª mesmo agora todos os comandos necessÃ¡rios e faÃ§a o diagnÃ³stico grÃ¡fico do modelo:
 
 ```{r}
 # Coloque o comando aqui
-# Coloque o comando aqui
+par(mfrow=c(2,2))
+plot(modelo_3)
 ```
 
-## Conclusões
+## ConclusÃµes
 
-### Quais dos modelos seguem e quais modelos não seguem os pressupostos de uma regressão linear simples? Explique quais pressupostos não foram cumpridos e em quais modelos. 
+### Quais dos modelos seguem e quais modelos nÃ£o seguem os pressupostos de uma regressÃ£o linear simples? Explique quais pressupostos nÃ£o foram cumpridos e em quais modelos. 
 
-**R:** *coloque a sua resposta aqui*
+**R:** *modelo1 segue os pressupostos, mas nÃ£o hÃ¡ correlaÃ§Ã£o com um modelo de linear, identificado pelo grafico de Residuals vs Fitted*
+**R:** *modelo2 segue os pressupostos e mantÃªm um alta correlaÃ§Ã£o com um modelo de linear*
+**R:** *modelo3 nÃ£o segue o pressuposto de normalidade dos residuos, identificado pelo grafico de Residuals vs Fitted, e pelo test Shapiro-Wilk*
 
-### Você proporia alguma alternativa (outro teste) para a relação entre as variáveis mostradas? Qual seria? Explique.
+### VocÃª proporia alguma alternativa (outro teste) para a relaÃ§Ã£o entre as variÃ¡veis mostradas? Qual seria? Explique.
 
-**R:** *coloque a sua resposta aqui*
+**R:** *Em continuidade poderiamos a aplicar uma anÃ¡lise grafica car::crPlots afim de tentar descobrir/validar a existensia de uma possivel curva no modelo1, parao o modelo2 poderiamos aplicar Durbin-Watson para validar se as variaveis sÃ£o independentes, tambÃ©m poderiamos validar a homocedasticidade dos dados pelo 3Âº grafico*
+```{r}
+library(car)
+car::crPlots(modelo_1)
+```

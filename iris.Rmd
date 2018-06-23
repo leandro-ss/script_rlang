@@ -72,8 +72,3 @@ bartlett.test(x = exer$Sepal.Length, g = exer$Species) # Aceita a hipotese nula,
 
 # Executar teste t 
 t.test(Sepal.Length  ~ Species, exer, var.equal=FALSE) # medias são iguais, regeito minha hiposete nula, p < 0.01 
-
-
-jmvelis@gmail.com
-```
-
