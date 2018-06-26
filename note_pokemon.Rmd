@@ -7,6 +7,13 @@ output: pdf_document
 
 ```{r setup, tidyverse, magrittr, ggcorrplot, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+suppressMessages(library(ggplot2)) 
+suppressMessages(library(readr)) 
+suppressMessages(library(dplyr))
+suppressMessages(library(RColorBrewer))
+suppressMessages(library(tidyr))
+suppressMessages(library(gridExtra))
 ```
 ## R Markdown
 
@@ -14,30 +21,65 @@ knitr::opts_chunk$set(echo = TRUE)
 
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-```{r readr,include=FALSE}
+```{r readr,include=FALSE, message=FALSE}
 
-pokemon <- read_csv("dataset/pokemon.csv")
+pokemon <- read.csv("dataset/pokemon.csv")
 colnames(pokemon)[1] <- "No"
 colnames(pokemon)[3] <- "Type1"
 colnames(pokemon)[4] <- "Type2"
 colnames(pokemon)[8] <- "SpAtk"
 colnames(pokemon)[9] <- "SpDef"
-head(pokemon)
+head (pokemon)
 
 names(pokemon) <- tolower(names(pokemon))
 pokemon$generation <- factor(pokemon$generation, levels = c(6,5,4,3,2,1))
-pokemon <- pokemon[pokemon$generation == 1 || pokemon$generation == 2 ]
-pokemon
+pokemon <- pokemon[pokemon$generation == 1 | pokemon$generation == 2, ]
 ```
 
 ## Including Plots
 
-```{r pressure, echo=FALSE}
+```{r}
 summary(pokemon)
 ```
-*Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.*
 
-We use the `aes` attribute to provide mappings for aesthetics. Note, this is required for all ggplot graphs.
+
 ```{r}
 pokemon %>% ggplot(aes(x= type1, fill = generation)) + geom_bar() + coord_flip()
 ```
+```{r}
+colnames(pokemon)
+```
+```{r}
+head(pokemon,5)
+```
+
+
+```{r}
+head (pokemon)
+
+par(mfrow=c(1,1)); plot (spdef ~ spatk, col = factor(pokemon$type1), data=pokemon)
+
+ggplot(pokemon, aes(x=type1, y=spatk, color= type1)) + geom_boxplot()
+ggplot(pokemon, aes(x=type1, y=spdef, color= type1)) + geom_boxplot()
+# 
+mod_spatk = lm(spdef ~ spatk,pokemon); summary(mod_spatk);par(mfrow=c(2,2)); plot(mod_spatk)
+mod_hp = lm(spdef ~ hp,pokemon); summary(mod_hp);par(mfrow=c(2,2)); plot(mod_hp)
+mod_test = lm(spdef ~ hp*spatk,pokemon); summary(mod_test);par(mfrow=c(2,2)); plot(mod_test)
+
+mod_femea = lm(Hwt~Bwt,femea); summary(mod_femea);par(mfrow=c(2,2)); plot(mod_femea)
+mod_sexo = lm(Hwt ~Bwt *Sex,cats); summary(mod_sexo);par(mfrow=c(2,2)); plot(mod_sexo)
+mod_test = lm(Hwt ~Bwt +Sex + Sex: Bwt,cats); summary(mod_sexo);par(mfrow=c(2,2)); plot(mod_test)
+# 
+ggplot(cats, aes (x=Bwt, y= Hwt, color=Sex, group = Sex))+
+    geom_point()+
+    geom_smooth(se=F,method="lm")+
+    labs(subtitle="Altura vs Peso dos Gatos",
+         y="Hwt",
+         x="Bwt",
+         title="Modelo de Covariancia Multipla")
+
+```
+
+```{r}
+```
+

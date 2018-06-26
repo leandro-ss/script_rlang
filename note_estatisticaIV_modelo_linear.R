@@ -1,6 +1,6 @@
 
 
-plot(y1~x1, anscombe) data("anscombe")
+data("anscombe")
 plot(y1~x1, anscombe) 
 abline(lm(y1~x1, anscombe), col="red") 
 
@@ -13,7 +13,8 @@ summary(lm(y1~x1, anscombe))
 names(summary(lm(y1~x1, anscombe)))
 summary(lm(y1~x1, anscombe))$coefficients
 
-
+par(mfrow=c(2,2))
+plot(lm(y1~x1, anscombe))
 
 set.seed(1)
 x <- sort(rnorm(n=50, mean=30, sd=3))
