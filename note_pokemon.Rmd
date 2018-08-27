@@ -46,37 +46,34 @@ summary(pokemon)
 ```{r}
 pokemon %>% ggplot(aes(x= type1, fill = generation)) + geom_bar() + coord_flip()
 ```
+
 ```{r}
-colnames(pokemon)
-```
-```{r}
-head(pokemon,5)
+t(head(pokemon,5))
 ```
 
-
 ```{r}
-head (pokemon)
+par(mfrow=c(1,1));
 
-par(mfrow=c(1,1)); plot (spdef ~ spatk, col = factor(pokemon$type1), data=pokemon)
+plot (spdef ~ spatk, col = factor(pokemon$type1), data=pokemon)
 
 ggplot(pokemon, aes(x=type1, y=spatk, color= type1)) + geom_boxplot()
-ggplot(pokemon, aes(x=type1, y=spdef, color= type1)) + geom_boxplot()
-# 
-mod_spatk = lm(spdef ~ spatk,pokemon); summary(mod_spatk);par(mfrow=c(2,2)); plot(mod_spatk)
-mod_hp = lm(spdef ~ hp,pokemon); summary(mod_hp);par(mfrow=c(2,2)); plot(mod_hp)
-mod_test = lm(spdef ~ hp*spatk,pokemon); summary(mod_test);par(mfrow=c(2,2)); plot(mod_test)
+#ggplot(pokemon, aes(x=type1, y=spdef, color= type1)) + geom_boxplot()
 
-mod_femea = lm(Hwt~Bwt,femea); summary(mod_femea);par(mfrow=c(2,2)); plot(mod_femea)
-mod_sexo = lm(Hwt ~Bwt *Sex,cats); summary(mod_sexo);par(mfrow=c(2,2)); plot(mod_sexo)
-mod_test = lm(Hwt ~Bwt +Sex + Sex: Bwt,cats); summary(mod_sexo);par(mfrow=c(2,2)); plot(mod_test)
+#mod_spatk = lm(spdef ~ spatk,pokemon); summary(mod_spatk);par(mfrow=c(2,2)); plot(mod_spatk)
+#mod_hp = lm(spdef ~ hp,pokemon); summary(mod_hp);par(mfrow=c(2,2)); plot(mod_hp)
+#mod_test = lm(spdef ~ hp*spatk,pokemon); summary(mod_test);par(mfrow=c(2,2)); plot(mod_test)
+
+#mod_femea = lm(Hwt~Bwt,femea); summary(mod_femea);par(mfrow=c(2,2)); plot(mod_femea)
+#mod_sexo = lm(Hwt ~Bwt *Sex,cats); summary(mod_sexo);par(mfrow=c(2,2)); plot(mod_sexo)
+#mod_test = lm(Hwt ~Bwt +Sex + Sex: Bwt,cats); summary(mod_sexo);par(mfrow=c(2,2)); plot(mod_test)
 # 
-ggplot(cats, aes (x=Bwt, y= Hwt, color=Sex, group = Sex))+
-    geom_point()+
-    geom_smooth(se=F,method="lm")+
-    labs(subtitle="Altura vs Peso dos Gatos",
-         y="Hwt",
-         x="Bwt",
-         title="Modelo de Covariancia Multipla")
+#ggplot(cats, aes (x=Bwt, y= Hwt, color=Sex, group = Sex))+
+#    geom_point()+
+#    geom_smooth(se=F,method="lm")+
+#    labs(subtitle="Altura vs Peso dos Gatos",
+#         y="Hwt",
+#         x="Bwt",
+#         title="Modelo de Covariancia Multipla")
 
 ```
 

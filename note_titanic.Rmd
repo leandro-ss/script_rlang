@@ -1,0 +1,141 @@
+---
+title: "titanic"
+author: "Leandro Sampaio"
+date: "August 4, 2018"
+output: html_document
+---
+Montando o dataset
+```{r}
+
+rm(list=ls()) # Limpa a workspace
+
+
+suppressMessages(if(!require(ggplot2)){install.packages("ggplot2")})
+suppressMessages(if(!require(GGally)){install.packages("GGally")})
+suppressMessages(if(!require(psci)){install.packages("psci")})
+
+suppressMessages(if(!require(broom)){install.packages("broom")})
+suppressMessages(if(!require(tidyverse)){install.packages("tidyverse")})
+
+suppressMessages(if(!require(scales)){install.packages("scales")})
+suppressMessages(if(!require(ggthemes)){install.packages("ggthemes")})
+suppressMessages(if(!require(dplyr)){install.packages("dplyr")})
+suppressMessages(if(!require(randomForest)){install.packages("randomForest")})
+suppressMessages(if(!require(corrplot)){install.packages("corrplot")})
+suppressMessages(if(!require(plyr)){install.packages("plyr")})
+
+theme_set(theme_bw())
+
+dataset=read.csv("dataset/titanic.csv", header = TRUE, sep = ";", dec=",");
+names(dataset) <- tolower(names(dataset)); str(dataset)
+
+dataset$child[dataset$age < 18] <- 1
+dataset$child[dataset$age >= 18] <- 0
+
+dataset$fsize <- dataset$sibsp + dataset$parch + 1
+
+dataset$fsized[dataset$fsize == 1] <- 'Alone'
+dataset$fsized[dataset$fsize < 5 & dataset$fsize > 1] <- 'Small'
+dataset$fsized[dataset$fsize > 4] <- 'Big'
+
+dataset$pclass = as.factor(dataset$pclass) # categorizando uma variavel numerica
+dataset$title = gsub('(.*, )|(\\..*)', '', dataset$name) # criando divisão por titulo do individuo
+dataset[ , !(names(dataset) %in% c("name","ticket","cabin"))] # removendo as colunas desnecessarias
+```
+Gerando graficos
+```{r warning=FALSE}
+# Class vs Survived
+ggplot(dataset, aes(pclass, fill = factor(survived))) + 
+  geom_bar(stat = "count", position = 'dodge')+
+  xlab("class") +
+  ylab("count") +
+  scale_fill_discrete(name = "survived") + 
+  ggtitle("Class vs Survived")
+
+# Sex vs Survived
+ggplot(dataset, aes(sex, fill = factor(survived))) + 
+  geom_bar(stat = "count", position = 'dodge')+
+  xlab("sex") +
+  ylab("count") +
+  scale_fill_discrete(name = "survived") + 
+  ggtitle("Sex vs Survived")
+
+# Age vs Survived
+ggplot(dataset, aes(age, fill = factor(survived))) + 
+  geom_histogram(bins=30) + 
+  xlab("age") +
+  scale_fill_discrete(name = "survived") + 
+  ggtitle("Age vs Survived")
+
+# Pclass vs Survived
+ggplot(dataset, aes(pclass, fill = factor(survived))) + 
+  geom_bar(stat = "count")+
+  xlab("Pclass") +
+  facet_grid(.~sex)+
+  ylab("Count") +
+  scale_fill_discrete(name = "Survived") + 
+  ggtitle("Pclass vs Sex vs Survived")
+
+ggplot(dataset, aes(x = age, y = sex)) + 
+  geom_jitter(aes(colour = factor(survived))) + 
+  theme(legend.title = element_blank())+
+  facet_wrap(~pclass) + 
+  labs(x = "Age", y = "Sex", title = "Pclass vs Sex vs Age vs Survived")+
+  scale_fill_discrete(name = "Survived") + 
+  scale_x_continuous(name="Age",limits=c(0, 81))
+
+```
+Verificando correlacao
+```{r}
+
+#____________________________Correlogram__________________________
+corr_data <- cbind(dataset)
+
+## transform to numeric type and recodification
+corr_data$embarked <- revalue(dataset$embarked, c("S" = 1, "Q" = 2, "C" = 3))
+corr_data$sex <- revalue(dataset$sex, c("male" = 1, "female" = 2))
+corr_data$title <- revalue(dataset$title, c("Mr" = 1, "Master" = 2, "Mrs" = 3,"Miss" = 4))
+corr_data$fsized <- as.numeric(revalue(dataset$fsized, c("Small" = 1, "Alone" = 2, "Big" = 3)))
+corr_data$child <- as.numeric(dataset$child)
+corr_data$sex <- as.numeric(dataset$sex)
+corr_data$embarked <- as.numeric(dataset$embarked)
+corr_data$pclass <- as.numeric(dataset$pclass)
+corr_data$survived <- as.numeric(dataset$survived)
+corr_data$title <-  as.numeric(dataset$title)
+
+corr_data <-corr_data[,c("survived", "pclass", "sex", "fsized", "fare", "embarked","title", "child")]
+corrplot(cor(corr_data), method="circle")
+```
+
+Elaborando o modelo
+```{r}
+mod = glm(dataset$survived ~ age+sex+pclass, family="binomial", data = dataset); summary(mod)
+pred = predict(mod, newdata = dataset, type = "response"); summary(pred)
+dataset$pred = pred > 0.50 # faz a limiarização (diferença nos níveis)
+
+MC = table(dataset$survived, dataset$pred, deparse.level = 2); show(MC)# montar a matriz de confusão  
+ACC = sum(diag(MC))/sum(MC);show(ACC)
+
+rChance=exp(mod$coefficients);rChance
+indConfianca=confint.default(mod,level=0.95);indConfianca
+round(cbind(rChance,exp(indConfianca)),3)
+```
+
+```{r}
+dataset_t <- dataset_test %>% filter(fare > 0  ) %>% mutate (logFare = log(fare), survived = as.factor (survived))
+
+bm <- glm(survived ~ logFare, data = dataset_t, family = "binomial")
+tidy(bm, conf.int = TRUE)
+tidy(bm, conf.int = TRUE, exponentiate = TRUE)
+
+bm %>%  augment(type.predict = "response") %>% mutate(survivedNum = ifelse(survived == "1", 1, 0)) %>% 
+            ggplot(aes(x = logFare)) +
+            geom_count(aes(y = survivedNum), alpha = 0.5) +
+            geom_line(aes(y = .fitted))
+```
+
+```{r}
+bm %>% augment(type.predict = "response")
+predictions <- predict(bm, type = "response") > .5
+dataset_t %>% mutate(true_survivals = survived == 1)
+```

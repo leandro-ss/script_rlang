@@ -1,0 +1,208 @@
+---
+title: "Avaliacao Individual - Multivariada I"
+author: "Leandro Sampaio Silva"
+date: "30 de junho de 2018"
+output: html_document
+---
+https://stats.stackexchange.com/questions/76226/interpreting-the-residuals-vs-fitted-values-plot-for-verifying-the-assumptions
+http://sphweb.bumc.bu.edu/otlt/MPH-Modules/BS/R/R5_Correlation-Regression/R5_Correlation-Regression7.html
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Para esse exercicio utilizaremos os dados de `Prestige`, presente no pacote `car`
+
+```{r warning=FALSE}
+if(!require(car)){install.packages("car")}
+data("Prestige")
+Prestige<-na.omit(Prestige);
+summary(Prestige)
+```
+`education`: Quantidade media de anos estudantes (1971).
+`income`: Ganho salarial medio, em dolares (1971).
+`women`: Porcentagem de mulheres na profissao.
+`prestige`: Score de prestigio, segundo Pineo-Porter para ocupacoes, a partir de inventarios realizados na decada de 1960.
+`census`: Codigo de ocupacao segundo o censo canadense.
+`type`: Tipo de ocupacao. Um fator com n?veis: `bc`, *Blue Collar*; 
+            `prof`, *Professional*, *Managerial*, e *Technical*; `wc`, *White Collar*
+
+Construindo o modelo geral (`mod_geral`), com todas as variaveis para explicar o prestigio social das pessoas:
+```{r}
+mod_geral <- lm(prestige~., Prestige); summary(mod_geral)
+```
+
+## 2. Analise grafica do modelo
+
+```{r}
+par(mfrow=c(2,2))
+plot(mod_geral)
+```
+
+### A. Questao: 
+Quais sao os pressupostos que devemos analisar nesses graficos? Existe algum que parece estar sendo violado? Explique.
+**R:** *Os pressupostos que podemos analisar a partir dos graficos são: de linearidade, de normalidade, Homocedastico, outliers. Se constata a presença de alguns outliers, tendo também afetado a linearidade dos residuos, talvez a remoção dos mesmos permitiria um melhor desenho da reta, contudo os residuos ainda seguem uma normalidade e mantem a homocedasticidade*
+
+### B. Questao:
+Por que e importante examinar a suposicao de distribuicao normal dos residuos?
+**R:** *Porque caso algum dos pressupostos sejam violados, podemos cair em um cenario de falso positivo para a linearidade dos residuos sobre uma "reta".*
+
+## 3. Correlacao de variveis
+Visualizacao da correlacao entre variaveis:
+```{r}
+fcor<-function(x,y){
+  par(usr=c(0,1,0,1))
+  txt<- as.character(round(cor(x,y),2))
+  text(0.5, 0.5, txt, cex=1.5)
+}
+
+flines <-function(x,y){
+        points(x,y)
+        abline(lm(y~x), col="red")
+}
+
+pairs(Prestige, 
+      lower.panel= flines, 
+      upper.panel = fcor)
+```
+
+Analise VIF:
+```{r}
+vif(mod_geral)
+```
+
+### A. Questao: 
+De que maneira as variaveis correlacionadas podem afetar a interpretacao da equaacao da regressao? Explique.
+**R:** *Altos valores de Erros padrões para os coeficientes;Coeficiente geral pode se mostrar significativo, mas seus coeficientes individuais podem não ser significativos; Sinal incorreto de coeficientes; e instabilidade quando as VI forem analisadas separadamente podem mostrar importâncias diferentes quando analisadas em conjunto.*
+
+### B. Questao: 
+Qual a diferenca entre variaveis independentes interativas com variaveis independentes correlacionadas? Explique.
+**R:** *Variaveis ind. interativas afetam-se de forma mutua, normalmente apresentando um fator de proporção entre si, enquanto variaveis ind. correlacionadas normalmente obedecem um comportamento similar mas não associado.*
+
+## 4. Mudanca do modelo com analises VIF e grafica
+Escolha, a partir dos exames previos anteriores, algumas varivveis independentes para propor um novo modelo. Substitua o `---` pelo nome das variaveis (`education`, `income`, `women`, `census` e/ou `type`), separadas por `+`:
+
+```{r}
+mod_novo <- lm(prestige ~ 
+                      income+education,  # Substitua --- pelo nome das vari?veis que julga importante 
+               Prestige)
+summary(mod_novo)
+```
+
+
+Verificacao grafica do novo modelo (`mod_novo`):
+
+```{r}
+par(mfrow=c(2,2))
+plot(mod_novo)
+```
+Correlacao das variaveis independentes:
+
+```{r}
+vif(mod_novo)
+```
+### Questao:
+O novo modelo parece adequado? Explique.
+**R**: *As variavel correlacionada não esta mais presente, as variaveis que pouco agregavam ao modelo também foram removidas, A linearidade dos residuos segue prejudicada e ainda e um ponto a ser observado*
+
+## 5. ANOVA dos modelos
+Compare os modelos antigo (`mod_geral`) e novo (`mod_novo`) usando `anova`:
+```{r}
+anova(mod_novo, mod_geral)
+```
+### Questao:
+Qual dos dois modelos voce? julga mais adequado? Explique.
+**R**: *Depende do uso, no caso para predição eu manteria o segundo modelo, visto que os modelos de predição normalmente não são afetados por variaveis correlacionadas, contudo para os demais casos eu escolheria o primeiro.*
+
+# Interpretacao de modelos
+## 6. Correlacao parcial
+Ainda utilizando os dados `Prestige`, podemos observar certa correlacao entre as variaveis `prestige`, `income` e `education`:
+```{r}
+pre<-Prestige[c('prestige', 'income', 'education')]
+pairs(pre,
+      lower.panel = fcor,
+      upper.panel = flines)
+```
+E um pesquisador ficou em duvida para ver o quanto do `prestige` dado pela educacao (`education`) seria na verdade decorrente dos ganhos financeiros da profissao (`income`). Para isso ele utilizou o calculo para as correlacoes parciais entre as variaveis `income`, `education` para explicar `prestige`:
+
+```{r}
+rho_parcial <- function(Y=Y, X1=X1, X2=X2){
+  rho_Y_X1 <- cor(Y, X1)
+  rho_Y_X2 <- cor(Y, X2)
+  rho_X1X2 <- cor(X1, X2)
+  rho_parcial_X1 <- (rho_Y_X1 -
+				 (rho_Y_X2*rho_X1X2))/
+				   sqrt(1-rho_X1X2^2)
+  return(rho_parcial_X1)  
+}
+prestige <- Prestige$prestige
+income <- Prestige$income
+education <- Prestige$education
+so_income <-rho_parcial(Y=prestige, X1=income, X2=education)^2
+so_education <- rho_parcial(Y=prestige, X1=education, X2=income)^2
+education_income <-cor(prestige, income)^2 - so_income
+nao_explicado <- 1- (so_income + so_education + education_income)
+
+t(data.frame(so_income, so_education, education_income, nao_explicado))
+
+```
+
+### Questao:
+Qual dos dois fatores (`education` e `income`) voce julga mais importante para explicar `prestige`? Explique.
+**R**: *Só education já é suficiente por explicar 31% do prestige, enquanto income é responsável por somente 6% ficando, mesmo a combinação de ambas não justificaria representa sometne 43% ou seha 12% a mais, tendo ainda a ser considerado o grau de colinearidade entre ambas*
+
+## 7. Modelo sem interacao
+O modelo entre `prestige` com `education` e `type` foi montado a seguir:
+```{r}
+mod_sem <- lm(prestige ~ type + education, Prestige)
+summary(mod_sem)
+```
+
+### Questao:
+Interprete os coeficientes colocados no `summary`.
+**R**: *Education apresenta uma grande significancia para o modelo, contudo somente typewc apresenta alguma significancia a ser considerada além do educaition*
+
+## 8. Modelo com interacao
+O modelo entre `prestige` com `education` e `type` foi modificado, levando em considera??o a intera??o a seguir:
+```{r}
+mod_com <- lm(prestige ~ type*education, Prestige)
+summary(mod_com)
+```
+
+### Questao:
+O que mudou entre o modelo `mod_sem` e `mod_com`? Explique
+**R**: *No caso foi considerada o grau de correlacao entre as interações das variaveis education e type. Contudo education por si só foi a unica a apresentar uma significancia como no caso anterior. N~ao houve grande mundanca entre o R-squared dos modelos comparados.*
+
+## 9. Comparacao entre os modelos
+```{r}
+anova(mod_sem, mod_com)
+```
+
+### Questao:
+Qual dos dois modelos voc? julga mais adequado? Explique.
+**R**: *O segundo, por apresentar um grau de correlaçao superior ao apresetado no primeiro modelo.*
+
+## 10. Usando `predict`
+
+A partir do seu modelo constru?do, preveja o prest?gio `prestige` de uma profiss?o que n?o existia em 1971, mas que existe hoje: [Cientista de Dados](https://exame.abril.com.br/carreira/profissao-mais-sexy-do-seculo-21-segue-em-alta-no-brasil/), considerada a profiss?o mais *sexy* atualmente...
+Para isso, utilize os valores aproximados para essa profissao, construindo um `data.frame`. Os comandos a seguir j? est?o feitos:
+
+```{r}
+data_scientist <- data.frame(education = 14,#Fonte: https://goo.gl/jTZdzX 
+                             income = 19,1, #Fonte: https://goo.gl/yWcqBS e https://goo.gl/CNku38
+                             women = 1/3,   #Fonte: https://goo.gl/wxN543
+                             type = 'prof')
+```
+
+Agora, a partir do seu modelo (coloque o nome do seu modelo escolhido no lugar de `---` a seguir), responda qual seria o *prest?gio* de um cientista de dados no ano de 1971.
+
+```{r}
+predict(mod_sem,  # Substitua --- pelo nome do modelo que julga melhor
+        data_scientist, 
+        interval = "confidence")
+```
+
+Para finalizar, uma ultima questao:
+
+### Questao:
+Voce consegue encontrar uma equacao de regressao que seja aceitavel como estatisticamente significante, mas que nao ofereca valor interpretativo para fins de gerenciamento? Explique.
+**R**: *O Quarteto de Anscombe da uma serie de perfeitos exemplos de equacoes estatisticamente significantes, mas de pouca relevância para qualquer area em em que for usada. A equacao não pode ser considerada um preditor, caso a pesquisa ou mesmo as amostras sejam consideradas falhas, a equacao de tera pouca significancia gerencial para qualquer seja o resultado estatistico*

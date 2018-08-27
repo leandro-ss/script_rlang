@@ -76,13 +76,13 @@ summary(modelo_1)
 ```
 
 #### Qual o valor Intercepto? Ele e significativo? Interprete o resultado.
-**R:** *O valor estimado para o Intercepto e de 4469.07, enquanto o p-valor mantem-se significativo, abaixo de 5%, e afirmamos que o Intercepto sera diferente de 0*
+**R:** *O valor estimado para o Intercepto e de 4469.07, enquanto o p-valor manteve-se significativo ou seja abaixo de 5%, constatando que o Intercepto e diferente de 0*
 
 #### Qual ? o valor do coeficiente angular? Ele e significativo? Interprete o resultado.
-**R:** *O valor estimado para o Coeficiente Angular e de -23.03, enquanto o p-valor mantem-se significativo, abaixo de 5%, com isso afirmamos que o Coeficiente Angular não sera nulo, ou seja, sera diferente de 0*
+**R:** *O valor estimado para o Coeficiente Angular e de -23.03, enquanto o p-valor mantem-se significativo, abaixo de 5%, com isso afirmamos que o Coeficiente Angular não sera nulo, ou seja, e diferente de 0*
 
 #### Qual ? o valor do coeficiente de determinacao ($R^2$) do modelo? Interprete o resultado.
-**R:** *O valor estimado para o Coeficiente de Determinacao R² e de 0.93, onde podemos presumir,  tendo os pressupostos sido respeitados, que os pontos seguem uma linearidade*
+**R:** *O valor estimado para o Coeficiente de Determinacao R² e de 0.93, onde podemos presumir, tendo os pressupostos sido respeitados, que os pontos seguem uma linearidade*
 
 ### B) Veja o resultado do `modelo_2`
 Complete a linha de comando a seguir:
@@ -97,7 +97,7 @@ summary(modelo_3) # coloque o comando aqui
 ```
 
 #### Qual o valor Intercepto? Ele e significativo? Interprete o resultado.
-**R:** *O valor estimado para o Intercepto e de 14.85, enquanto o p-valor mantem-se significativo, abaixo de 5%, e afirmamos que o Intercepto sera diferente de 0, com um grau menor de certeza do que o constatado no exemplo 1*
+**R:** *O valor estimado para o Intercepto e de 14.85, enquanto o p-valor manteve-se significativo ou seja abaixo de 5%, constatando que o Intercepto e diferente de 0, com um grau menor de certeza do que o constatado no exemplo 1*
 
 #### Qual e o valor do coeficiente angular? Ele e significativo? Interprete o resultado.
 **R:** *O valor estimado para o Coeficiente Angular e de 0.46, enquanto o p-valor mantem-se significativo, abaixo de 5%, com isso afirmamos que o Coeficiente Angular não sera nulo, ou seja, sera diferente de 0*
@@ -152,6 +152,7 @@ par(mfrow=c(2,2));plot(modelo_3) # Coloque o comando aqui
 
 ## Conclusoes
 ### Quais dos modelos seguem e quais modelos nao seguem os pressupostos de uma regressao linear simples? Explique quais pressupostos nao foram cumpridos e em quais modelos. 
-**R:** *Para o estudo somente o modelo_2 atende aos pressupostos de normalidade e homocedasticidade dos residuos enquanto mantem um alto indice de correlacao representado por R², tendo sido desconsiderado o modelo_1 por nao apresentar a homocedasticidade dos residuos e modelo_3 pela ausencia de da normalidade do mesmo*
+**R:** *Para o estudo somente o modelo_2 atende aos pressupostos de normalidade e homocedasticidade dos residuos enquanto mantem um alto indice de correlacao representado por R², tendo sido desconsiderado o modelo_1 por nao apresentar a homocedasticidade dos residuos e modelo_3 pela ausencia de normalidade no residuo do mesmo*
 ### Voce proporia alguma alternativa (outro teste) para a relacao entre as variaveis mostradas? Qual seria? Explique.
-**R:** *Para o modelo_1 eu proporia uma variacao em funcao de f quadratica juntamente, e um comparativo atraves de AIC*
+**R:** *Para o modelo_1, e recomendado adocao de um modelo quadratico, constatado por analise visual*
+**R:** *Para o modelo_3, não ha acoes de correcao que possam tratar a disposicao dos residuos, recomenda-se a coleta de uma nova amostra ou a adocao de outra abordagem para estimar sua linearidade*

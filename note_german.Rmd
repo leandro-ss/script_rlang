@@ -1,0 +1,145 @@
+---
+title: "German Bank"
+author: "Leandro Sampaio"
+date: "August 18, 2018"
+output: html_document
+---
+
+```{r}
+suppressMessages(if(!require(ggplot2)){install.packages("ggplot2")})
+suppressMessages(if(!require(GGally)){install.packages("GGally")})
+suppressMessages(if(!require(psci)){install.packages("psci")})
+
+suppressMessages(if(!require(broom)){install.packages("broom")})
+suppressMessages(if(!require(tidyverse)){install.packages("tidyverse")})
+
+suppressMessages(if(!require(scales)){install.packages("scales")})
+suppressMessages(if(!require(ggthemes)){install.packages("ggthemes")})
+suppressMessages(if(!require(dplyr)){install.packages("dplyr")})
+suppressMessages(if(!require(randomForest)){install.packages("randomForest")})
+suppressMessages(if(!require(corrplot)){install.packages("corrplot")})
+suppressMessages(if(!require(plyr)){install.packages("plyr")})
+
+theme_set(theme_bw())
+
+dataset<-read.csv("dataset/german.csv", header = TRUE, sep = ";", dec=",");
+
+str(dataset_test)
+
+names(dataset) <- tolower(names(dataset)); str(dataset)
+dataset$obs.<-NULL
+str(dataset)
+
+#transforma em fatores as variáveis categóricas e "dummies"
+dataset[,"chk_acct"] <- as.factor(dataset[,"chk_acct"])
+dataset[,"history"] <- as.factor(dataset[,"history"])
+dataset[,"new_car"] <- as.factor(dataset[,"new_car"])
+dataset[,"used_car"] <- as.factor(dataset[,"used_car"])
+dataset[,"furniture"] <- as.factor(dataset[,"furniture"])
+dataset[,"radio.tv"] <- as.factor(dataset[,"radio.tv"])
+dataset[,"education"] <- as.factor(dataset[,"education"])
+dataset[,"retraining"] <- as.factor(dataset[,"retraining"])
+dataset[,"sav_acct"] <- as.factor(dataset[,"sav_acct"])
+dataset[,"employment"] <- as.factor(dataset[,"employment"])
+dataset[,"male_div"] <- as.factor(dataset[,"male_div"])
+dataset[,"male_single"]  <- as.factor(dataset[,"male_single"])
+dataset[,"co.applicant"]  <- as.factor(dataset[,"co.applicant"])
+dataset[,"guarantor"] <- as.factor(dataset[,"guarantor"])
+dataset[,"real_estate"]  <- as.factor(dataset[,"real_estate"])
+dataset[,"other_install"] <- as.factor(dataset[,"other_install"])
+dataset[,"rent"] <- as.factor(dataset[,"rent"])
+dataset[,"own_res"] <- as.factor(dataset[,"own_res"])
+dataset[,"num_credits"]  <- as.factor(dataset[,"num_credits"])
+dataset[,"job"] <- as.factor(dataset[,"job"])
+dataset[,"telephone"] <- as.factor(dataset[,"telephone"])
+dataset[,"foreign"] <- as.factor(dataset[,"foreign"])
+#variável dependente
+dataset[,"response"]  <- as.factor(dataset[,"response"])
+#transforma em numeric
+dataset[,"amount"] <- as.numeric(dataset[,"amount"])
+dataset[,"install_rate"] <- as.numeric(dataset[,"install_rate"])
+dataset[,"age"] <- as.numeric(dataset[,"age"])
+dataset[,"duration"]  <- as.numeric(dataset[,"duration"])
+```
+
+Codelist				
+Var. #	Variable Name	Description	Variable Type	Code Description
+				
+1.  OBS#	    Observation No.	Categorical	
+2. 	CHK_ACCT	Checking account status	Categorical	0 : < 0 DM
+				1:  0 < ...< 200 DM
+				2 : => 200 DM
+				3:  no checking account
+3. 	DURATION	Duration of credit in months	Numerical	
+4. 	HISTORY	    Credit history	Categorical	0: no credits taken                                                                                                                   
+				1: all credits at this bank paid back duly 
+				2: existing credits paid back duly till now 
+				3: delay in paying off in the past  
+				4: critical account  
+5. 	NEW_CAR	    Purpose of credit	Binary	car (new)   0: No, 1: Yes
+6.	USED_CAR	Purpose of credit	Binary	car (used)    0: No, 1: Yes
+7.	FURNITURE	Purpose of credit	Binary	furniture/equipment    0: No, 1: Yes
+8.	RADIO/TV	Purpose of credit	Binary	radio/television    0: No, 1: Yes
+9.	EDUCATION	Purpose of credit	Binary	education    0: No, 1: Yes
+10.	RETRAINING	Purpose of credit	Binary	retraining    0: No, 1: Yes
+11.	AMOUNT	    Credit amount	Numerical	
+12.	SAV_ACCT	Average balance in savings account	Categorical	0 : <  100 DM
+				1 : 100<= ... <  500 DM
+				2 : 500<= ... < 1000 DM
+				3 : =>1000 DM
+				4 :   unknown/ no savings account
+13.	EMPLOYMENT	Present employment since	Categorical	0 : unemployed
+				1:  < 1 year
+				2 : 1 <= ... < 4 years  
+				3 : 4 <=... < 7 years
+				4 : >= 7 years
+14.	INSTALL_RATE	Installment rate as % of disposable income	Numerical	
+15.	MALE_DIV	Applicant is male and divorced	Binary	 0: No, 1: Yes
+16.	MALE_SINGLE	Applicant is male and single	Binary	 0: No, 1: Yes
+17.	MALE_MAR_WID	Applicant is male and married or a widower	Binary	 0: No, 1: Yes
+18.	CO-APPLICANT	Application has a co-applicant	Binary	 0: No, 1: Yes
+19.	GUARANTOR	Applicant has a guarantor	Binary	 0: No, 1: Yes
+20.	PRESENT_RESIDENT	Present resident since - years	Categorical	0: <= 1 year
+				1<…<=2 years
+				2<…<=3 years
+				3:>4years
+21.	REAL_ESTATE	Applicant owns real estate	Binary	 0: No, 1: Yes
+22.	PROP_UNKN_NONE	Applicant owns no property (or unknown)	Binary	 0: No, 1: Yes
+23.	AGE	Age in years	Numerical	
+24.	OTHER_INSTALL	Applicant has other installment plan credit	Binary	 0: No, 1: Yes
+25.	RENT	Applicant rents 	Binary	 0: No, 1: Yes
+26.	OWN_RES	Applicant owns residence	Binary	 0: No, 1: Yes
+27.	NUM_CREDITS	Number of existing credits at this bank	Numerical	
+28.	JOB	Nature of job	Categorical	0 : unemployed/ unskilled  - non-resident
+				1 : unskilled - resident
+				2 : skilled employee / official
+				3 : management/ self-employed/highly qualified employee/ officer
+29.	NUM_DEPENDENTS	Number of people for whom liable to provide maintenance	Numerical	
+30.	TELEPHONE	Applicant has phone in his or her name	Binary	 0: No, 1: Yes
+31.	FOREIGN	Foreign worker	Binary	 0: No, 1: Yes
+32.	RESPONSE	Credit rating is good	Binary	 0: No, 1: Yes
+
+
+```{r}
+#Índices obtidos após a aleatorização
+srt <- sort(sample(nrow(dataset), nrow(dataset)*.6))
+#Dados para o treinamento
+training <- dataset[srt,]
+#Dados para a validação
+test <- dataset[-srt,]
+```
+
+
+```{r}
+mod.full <- glm(response ~ . ,family=binomial(),data=training);summary(mod.full)
+#Abordagem Stepwise para seleção de variáveis
+stepwise <- step(mod.full,direction="both");summary(stepwise)
+
+mod.optimize <- glm(family=binomial(),data=training
+    ,response ~ chk_acct + duration + history + new_car + used_car + 
+    education + amount + sav_acct + install_rate + male_single + 
+    guarantor + age + other_install)
+summary(mod.optimize)
+#Calcula a razão de chances
+exp(cbind(OR = coef(stepwise), confint(stepwise)))
+```

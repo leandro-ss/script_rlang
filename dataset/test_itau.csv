@@ -1,0 +1,14 @@
+Business Transaction Performance|Business Transactions|MyTier|/tasks/1|Average Wait Time (ms);SIXTY_MIN;0;0;0;0;4
+Business Transaction Performance|Business Transactions|MyTier|/tasks/search|Average Wait Time (ms);SIXTY_MIN;0;0;0;0;8
+Business Transaction Performance|Business Transactions|MyTier|/tasks/search|Average Wait Time (ms);SIXTY_MIN;0;0;0;0;2
+Business Transaction Performance|Business Transactions|MyTier|/tasks/search|Average Wait Time (ms);SIXTY_MIN;0;0;0;0;0
+Business Transaction Performance|Business Transactions|MyTier|/tasks/2|Average Wait Time (ms);SIXTY_MIN;0;0;0;0;4
+Business Transaction Performance|Business Transactions|MyTier|/tasks/3|Average Wait Time (ms);SIXTY_MIN;0;0;0;0;2
+Business Transaction Performance|Business Transactions|MyTier|JavaTimer.PoolCleaner|Average Wait Time (ms);SIXTY_MIN;0;0;0;0;96
+Business Transaction Performance|Business Transactions|MyTier|JavaTimer.PoolCleaner|Average Wait Time (ms);SIXTY_MIN;0;0;0;0;17
+Business Transaction Performance|Business Transactions|MyTier|JavaTimer.PoolCleaner|Average Wait Time (ms);SIXTY_MIN;0;0;0;0;5
+Business Transaction Performance|Business Transactions|MyTier|JavaTimer.PoolCleaner|Average Wait Time (ms);SIXTY_MIN;0;0;0;0;1
+Business Transaction Performance|Business Transactions|MyTier|JavaTimer.PoolCleaner|Average Wait Time (ms);SIXTY_MIN;0;0;0;0;6
+Business Transaction Performance|Business Transactions|MyTier|JavaTimer.PoolCleaner|Average Wait Time (ms);SIXTY_MIN;0;0;0;0;6
+Business Transaction Performance|Business Transactions|MyTier|JavaTimer.PoolCleaner|Average Wait Time (ms);SIXTY_MIN;0;0;0;0;6
+Business Transaction Performance|Business Transactions|MyTier|JavaTimer.PoolCleaner|Average Wait Time (ms);SIXTY_MIN;0;0;0;0;1

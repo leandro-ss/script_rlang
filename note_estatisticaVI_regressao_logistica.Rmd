@@ -1,0 +1,175 @@
+---
+title: "regressao_logistica"
+author: "Leandro Sampaio"
+date: "August 4, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Os dados se referem a um estudo sobre autoavaliação geral de saúde (1=não boa, 0=boa) de n=30 indivíduos com idade variando de 20 a 95 anos. O objetivo do estudo é estudar a relação entre a autoavaliação de saúde (Y) e as seguintes variáveis explicativas: idade(em anos) e renda familiar per capita (1=Mais de 3 s.m, 0= Até 3 s.m=base).
+
+```{r}
+idade=c(21,20,25,26,22,35,36,40,42,46,59,50,60,72,85,59,29,45,39,45,20,25,36,58,95,52,80,85,62,72);
+renda=c(1,1,1,1,0,0,1,1,1,1,1,0,1,1,1,1,1,0,0,0,0,0,0,1,0,0,0,0,0,1);
+saude=c(0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1);
+```
+```{r}
+mod1=glm(saude~idade+renda,family=binomial(link="logit"));summary(mod1)
+or1=exp(mod1$coefficients);or1
+icBeta1=confint.default(mod1,level=0.95);icBeta1
+icOR1=exp(icBeta1);icOR1
+round(cbind(or1,icOR1),3)
+```
+```{r}
+mod2=glm(saude~idade,family=binomial(link="logit"));summary(mod2)
+or2=exp(mod2$coefficients);or2
+icBeta2=confint.default(mod2,level=0.95);icBeta2
+icOR2=exp(icBeta2);icOR2
+round(cbind(or2,icOR2),3)
+
+
+```
+
+Tanto a idade quanto a renda familiar per capita estão significativamente relacionadas com a chance de autoavaliação de saúde não boa (OBS: Note que o p-valor é menor que o nível de significância de 5% e o IC para OR não inclui a unidade).
+A chance do indivíduo reportar um estado de saúde não bom aumenta em 14,2% ao aumentar em 1 ano a idade.
+```{r}
+gav <- read.csv("dataset/gaviao.csv", header = TRUE, sep = ";", dec=",")
+gav.logi<-glm(resp~alt,data=gaviao,family=binomial);summary(gav.logi)
+gav.or=exp(gav.logi$coefficients);gav.or
+gav.icBeta=confint.default(gav.logi,level=0.95);gav.icBeta
+
+plot(gav$alt,gav$resp,xlab="Altura das árvores (vezes 10)", ylab="Presença de gavião(0 e 1) e prob encontro de gavião  (curva)")
+curve((exp(3.67961+0.19013*x))/(1+(exp(3.67961+ 0.19013*x))),add=TRUE) # Invertendo o valor do Intercepto
+curve((exp(-3.67961+0.19013*x))/(1+(exp(-3.67961+ 0.19013*x))),add=TRUE) # Invertendo o valor do Intercepto
+```
+No exemplo a seguir iremos criar um modelo para prever a adimplência do cliente com base em fatores demográfico e de renda. Utilizaremos o modelo de regressão logística para tal finalidade.
+
+Etapas da modelagem
+- A modelagem será feita em 3 etapas:
+- análise da variáveis
+- construção do modelo
+- teste do modelo
+```{r}
+dataset=read.csv("dataset/db_aulaclass.csv", header = TRUE, sep = ";", dec=",");dataset
+
+t(head(dataset)) #apresenta as primeiras variáveis  
+str(dataset) #tipo das variáveis  
+summary(dataset) #estatísticas descritivas da tabela
+
+names(dataset) <- tolower(names(dataset))
+
+options(fftempdir = "dataset") 
+tableplot(dataset)
+tableplot(dataset, sortCol = "idade", decreasing = F) # ordenado por idade do menor pro maior 
+
+dataset$adimplente = relevel(dataset$adimplente, ref = "N")
+
+rlSimples = glm(adimplente ~ ndep+renda+tipor+vbem+nparc+vparc+tel+idade+resms+entrada, family="binomial", data = dataset)
+
+predRL = predict(rlSimples, newdata = dataset, type = "response")
+
+dataset$adimplente_predrl = predRL > 0.45 # faz a limiarização (diferença nos níveis)
+
+MC = table(dataset$adimplente, dataset$adimplente_predrl, deparse.level = 2) # montar a matriz de confusão  
+show(MC)
+
+ACC = sum(diag(MC))/sum(MC) # calcula a acurácia 
+show(ACC) # mostra a acurácia 
+```
+
+```{r}
+if(!require(ggplot2)){install.packages("ggplot2")}
+
+dataset=read.csv("dataset/chd.csv", header = TRUE, sep = ";", dec=",");dataset
+
+ggplot(dataset, aes(x=age, y=chd))+ geom_point() + stat_smooth(method = "glm", method.args = list(family = "binomial"),se= FALSE)
+mod1=glm(chd ~ age, family =  binomial(link = "logit"), data=dataset); summary (mod1)
+or1=exp(mod1$coefficients);or1
+icBeta1=confint.default(mod1,level=0.95);icBeta1
+icOR1=exp(icBeta1);icOR1
+round(cbind(or1,icOR1),3)
+
+require(mfx)
+logitor(chd~age, data=dataset)
+
+exp(cbind(OR=coef(mod1),confint(mod1)))
+
+media = data.frame(age=mean(dataset$age));media
+```
+
+
+
+
+```{r}
+if(!require(ggplot2)){install.packages("ggplot2")}
+
+dataset=read.csv("dataset/dental.csv", header = TRUE, sep = ";", dec=",");dataset
+
+mod1=lm(v1 ~ v2+v3+v4+v5+v6, data=dataset); summary (mod1)
+
+summary(dataset)
+
+# descontinuado por ser diferente de binomial
+```
+
+```{r}
+
+suppressMessages(if(!require(ggplot2)){install.packages("ggplot2")})
+suppressMessages(if(!require(scales)){install.packages("scales")})
+suppressMessages(if(!require(ggthemes)){install.packages("ggthemes")})
+suppressMessages(if(!require(dplyr)){install.packages("dplyr")})
+suppressMessages(if(!require(randomForest)){install.packages("randomForest")})
+suppressMessages(if(!require(corrplot)){install.packages("corrplot")})
+suppressMessages(if(!require(plyr)){install.packages("plyr")})
+
+dataset=read.csv("dataset/titanic.csv", header = TRUE, sep = ";", dec=",");
+names(dataset) <- tolower(names(dataset))
+str(dataset)
+
+dataset[ , !(names(dataset) %in% c("name","ticket","cabin"))] # removendo as colunas desnecessarias
+
+# Class vs Survived
+ggplot(dataset, aes(pclass, fill = factor(survived))) + 
+  geom_bar(stat = "count", position = 'dodge')+
+  xlab("class") +
+  ylab("count") +
+  scale_fill_discrete(name = "survived") + 
+  ggtitle("Class vs Survived")
+
+# Sex vs Survived
+ggplot(dataset, aes(sex, fill = factor(survived))) + 
+  geom_bar(stat = "count", position = 'dodge')+
+  xlab("sex") +
+  ylab("count") +
+  scale_fill_discrete(name = "survived") + 
+  ggtitle("Sex vs Survived")
+
+# Age vs Survived
+ggplot(dataset, aes(age, fill = factor(survived))) + 
+  geom_histogram(bins=30) + 
+  xlab("age") +
+  scale_fill_discrete(name = "survived") + 
+  ggtitle("Age vs Survived")
+
+# Extract titles
+
+dataset$title = gsub('(.*, )|(\\..*)', '', dataset$name)
+
+dataset$pclass = as.factor(dataset$pclass)
+
+mod = glm(dataset$survived ~ age+sex+pclass, family="binomial", data = dataset);summary(mod)
+pred = predict(mod, newdata = dataset, type = "response"); summary(pred)
+dataset$pred = pred > 0.50 # faz a limiarização (diferença nos níveis)
+
+MC = table(dataset$survived, dataset$pred, deparse.level = 2); show(MC)# montar a matriz de confusão  
+ACC = sum(diag(MC))/sum(MC);show(ACC)
+
+
+rChance=exp(mod$coefficients);rChance
+indConfianca=confint.default(mod,level=0.95);indConfianca
+round(cbind(rChance,exp(indConfianca)),3)
+
+```
