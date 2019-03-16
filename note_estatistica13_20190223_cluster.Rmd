@@ -1,0 +1,48 @@
+---
+title: "Clusters"
+author: "UniCSul"
+date: "23 de fevereiro de 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+if(!require(tidyverse)){install.packages("tidyverse")}
+if(!require(cluster)){install.packages("cluster")}
+if(!require(NbClust)){install.packages("NbClust")}
+```
+
+
+```{r}
+hatco_dataset <- read.csv('dataset/hatco.csv',sep=",", dec=".", header = T)
+```
+
+## 0 Correlação ou Distância?
+```{r fig.height=2, fig.width=5, message=FALSE, warning=FALSE}
+# Como nao temos determinado o numero de grupos descriminado iremos aplicar uma analise exploratoria por distancia de Mahalanobis
+p <- hatco %>% 
+  gather(key="Variavel", 
+         value="Valor",
+         -Observ) %>%
+  ggplot(aes(x=Variavel, 
+             y=Valor,
+             group=Observ,
+             color=factor(Observ)))+
+  geom_line() + theme_classic()
+print(p)
+```
+## 1 Estandardizar variáveis?
+```{r}
+hatco <- subset(hatco_dataset, select=c("X1", "X2","X3","X4","X5", "X6","X7")) %>% scale()
+```
+## 2 Usar Análise de agrupamento hierárquico.
+```{r}
+hatco <- subset(hatco_dataset, select=c("X1", "X2","X3","X4","X5", "X6","X7")) %>% scale()
+```
+## 3 Qual método utilizar?
+## 4 Quantos agrupamentos devemos ter?
+## 5 Construir gráfico “cotovelo”.
+## 6 Existem observações atípicas?
+## 7 Avaliar as variáveis utilizadas entre grupos, com 2 e 4 grupos definidos.
+## 8 Quais variáveis tem maiores/menores valores para os grupos?
+## 9 Os grupos são verdadeiramente distintos?

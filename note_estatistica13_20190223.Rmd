@@ -1,0 +1,95 @@
+---
+title: "Untitled"
+link: "https://drive.google.com/open?id=0B57ls6ZQlZz2aFI0ZGRMRS1HdHE2XzlXeThpVmt5clZOcndR"
+output: 
+  html_notebook:
+    fig_height: 8
+    fig_width: 11
+---
+
+## R Markdown
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Dependencies
+
+```{r setup, include=FALSE, warning=FALSE, error=FALSE}
+  knitr::opts_chunk$set(echo = TRUE)
+  if(!require(ggplot2)){install.packages('ggplot2')}
+  if(!require(tidyverse)){install.packages('tidyverse')}
+  if(!require(cluster)){install.packages('cluster')}
+  if(!require(dplyr)){install.packages('dplyr')}
+```
+
+Samples
+
+```{r fig.height=2, fig.width=5, message=FALSE, warning=FALSE, paged.print=FALSE}
+  tabela <- data.frame(Observ = 1:7,
+    X1 = c(7,9,5,6,1,4,2),
+    X2 = c(10,9,5,6,2,3,4),
+    X3 = c(9,8,6,3,2,2,5),
+    X4 = c(7,9,7,3,1,3,2),
+    X5 = c(10,9,7,4,2,3,5));
+```
+
+Comparando matriz de correlacao e matriz de distancias, / Matriz de correlacao
+
+
+```{r fig.height=2, fig.width=5, message=FALSE, warning=FALSE, paged.print=FALSE}
+  dist(tabela[,-1]);
+  cor(t(tabela[,-1]));
+```
+
+
+```{r fig.height=2, fig.width=5, message=FALSE, warning=FALSE, paged.print=FALSE}
+  p <- tabela %>% 
+    gather(key="Variavel", value="Valor", -Observ) %>% 
+    ggplot(aes(x=Variavel,y=Valor,group=Observ, color=factor(Observ))) +
+      geom_line() +
+      theme_classic();
+  print(p)
+```
+
+
+```{r fig.height=2, fig.width=5, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+exemplo <- data.frame(V1=c(3,4,4,2,6,7,6), V2=c(2,5,7,7,6,7,4))
+
+row.names(exemplo)<- LETTERS[1:7]
+
+ggplot(exemplo, aes(V1,V2))+
+  geom_point(size=3,color="grey")+
+  theme_classic()+
+  xlim(c(0,10))+
+  ylim(c(0,10))+
+
+geom_text(aes(label=row.names(exemplo)),hjust=1,vjust=-1)
+```
+
+* Simples
+```{r fig.height=2, fig.width=5, message=FALSE, warning=FALSE, paged.print=FALSE}
+  plot(hclust(dist(exemplo),method="single")).locat;
+```
+* Completo
+```{r fig.height=2, fig.width=5, message=FALSE, warning=FALSE, paged.print=FALSE}
+  plot(hclust(dist(exemplo),method="complete"));
+```
+* UPGMC
+```{r fig.height=2, fig.width=5, message=FALSE, warning=FALSE, paged.print=FALSE}
+  plot(hclust(dist(exemplo),method="centroid"));
+```
+* UPGMA
+```{r fig.height=2, fig.width=5, message=FALSE, warning=FALSE, paged.print=FALSE}
+plot(hclust(dist(exemplo),method="average"));
+```
+* Ward
+```{r fig.height=2, fig.width=5, message=FALSE, warning=FALSE, paged.print=FALSE}
+plot(hclust(dist(exemplo),method="ward.D2"));
+```
+
+
+
+
+

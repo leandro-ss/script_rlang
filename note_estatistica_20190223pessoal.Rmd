@@ -1,0 +1,45 @@
+---
+title: "Untitled"
+link: "https://drive.google.com/open?id=0B57ls6ZQlZz2aFI0ZGRMRS1HdHE2XzlXeThpVmt5clZOcndR"
+output: 
+  html_notebook:
+    fig_height: 8
+    fig_width: 11
+---
+
+## R Markdown
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Dependencies
+
+```{r setup, include=FALSE, warning=FALSE, error=FALSE}
+  knitr::opts_chunk$set(echo = TRUE)
+  if(!require(ggplot2)){install.packages('ggplot2')}
+  if(!require(tidyverse)){install.packages('tidyverse')}
+  if(!require(cluster)){install.packages('cluster')}
+  if(!require(dplyr)){install.packages('dplyr')}
+```
+
+## Samples
+```{r}
+# Load the .csv files
+data14 <- bind_rows(apr14, may14, jun14, jul14, aug14, sep14)
+
+summary(data14)
+```
+
+```{r}
+
+data14 <- bind_rows(apr14, may14)
+demo('UnusedLevels')
+summary(data14)
+```
+
+
+
+
+
+ets

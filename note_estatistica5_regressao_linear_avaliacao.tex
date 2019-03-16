@@ -1,0 +1,276 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={Avaliacaoo Individual - Regressao Linear V},
+            pdfauthor={Leandro Sampaio},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{Avaliacaoo Individual - Regressao Linear V}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{Leandro Sampaio}
+    \preauthor{\centering\large\emph}
+  \postauthor{\par}
+      \predate{\centering\large\emph}
+  \postdate{\par}
+    \date{15 de julho de 2018}
+
+
+\begin{document}
+\maketitle
+
+\subsection{QUESTÃO 1}\label{questao-1}
+
+Uma estudante de nutrição visa avaliar a relação entre o consumo de
+cálcio e o conhecimento sobre cálcio em estudantes de educação física. A
+tabela abaixo sumariza os dados obtidos por ela. Existe uma relação
+entre o consumo de cálcio e o conhecimento sobre o cálcio nesses
+estudantes de educação física? A que conclusão é possível chegar? Assuma
+α = 0,05. Com base nos dados apresentados, é possível estimar a
+quantidade diária consumida esperada de cálcio em um estudante que
+obtivesse um escore de 50 pontos?
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{avaliacao =}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"dataset/avaliacao_calcio.csv"}\NormalTok{)}
+\KeywordTok{colnames}\NormalTok{(avaliacao)[}\DecValTok{1}\NormalTok{] <-}\StringTok{ "no"}
+\KeywordTok{colnames}\NormalTok{(avaliacao)[}\DecValTok{2}\NormalTok{] <-}\StringTok{ "score"}
+\KeywordTok{colnames}\NormalTok{(avaliacao)[}\DecValTok{3}\NormalTok{] <-}\StringTok{ "calcio"}
+
+\KeywordTok{summary}\NormalTok{(avaliacao)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##        no            score          calcio      
+##  Min.   : 1.00   Min.   :10.0   Min.   : 450.0  
+##  1st Qu.: 5.75   1st Qu.:22.0   1st Qu.: 725.0  
+##  Median :10.50   Median :29.0   Median : 799.0  
+##  Mean   :10.50   Mean   :29.6   Mean   : 785.1  
+##  3rd Qu.:15.25   3rd Qu.:38.5   3rd Qu.: 895.5  
+##  Max.   :20.00   Max.   :48.0   Max.   :1085.0
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = score ~ calcio, data = avaliacao)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -12.3225  -2.6761  -0.6142   1.0614  11.7650 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(>|t|)    
+## (Intercept) -14.372996   5.658649  -2.540   0.0205 *  
+## calcio        0.056009   0.007044   7.951 2.67e-07 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 5.355 on 18 degrees of freedom
+## Multiple R-squared:  0.7784, Adjusted R-squared:  0.7661 
+## F-statistic: 63.22 on 1 and 18 DF,  p-value: 2.675e-07
+\end{verbatim}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  residuals(mod)
+## W = 0.90366, p-value = 0.04833
+\end{verbatim}
+
+\includegraphics{note_estatisticaV_regressao_linear_avaliacao_files/figure-latex/unnamed-chunk-2-1.pdf}
+
+\paragraph{Conclusão:}\label{conclusao}
+
+\textbf{R:} \emph{O coeficiente de correlação (\(R^2\)) aponta para
+linearidade dos pontos sobre a reta. Tendo o p-valor do coeficiente
+angular sido significativo, podemos concluir que a angulação da reta não
+é nula, contudo grau de inclinação fica abaixo 1 e apesar de perceptível
+a inclinaçao da reta é discreta o que leva a crer que \textbf{existe a
+necessidade de uma grande quantidadede calcio para qualquer score (y)
+significativo.} }
+
+\subsection{QUESTÃO 2}\label{questao-2}
+
+Visando avaliar o efeito do consumo de álcool (em sujeitos que assumiram
+consumir mais de 100 g por dia) sobre a força da contração muscular, um
+grupo de pesquisadores (Urbano-Marquez, et al, 1989) avaliou em 50
+homens, com auxílio de um miômetro eletrônico, a força de contração do
+músculo deltoide do braço não dominante. A tabela ``Álcool.xls'', em
+anexo, traz os resultados desses indivíduos expressando uma estimativa
+do consumo total de álcool ingerido ao longo da vida (em kg de álcool
+por kg de peso corporal) e força muscular (em kgf). Com base nos dados
+fornecidos, é possível afirmar a existência de alguma relação entre as
+variáveis? Seria possível estabelecer um modelo preditivo a partir dos
+dados? Avalie os pré-requisitos necessários. Qual seria a força muscular
+esperada do deltoide do braço não dominante de um indivíduo que
+apresentasse um consumo de 35 kg de álcool por kg de peso corporal, ao
+longo de sua vida?
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{avaliacao =}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"dataset/avaliacao_alcool.csv"}\NormalTok{, }\DataTypeTok{sep =} \StringTok{","}\NormalTok{)}
+\KeywordTok{colnames}\NormalTok{(avaliacao)[}\DecValTok{1}\NormalTok{] <-}\StringTok{ "alcool"}
+\KeywordTok{colnames}\NormalTok{(avaliacao)[}\DecValTok{2}\NormalTok{] <-}\StringTok{ "musculo"}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mod <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(alcool }\OperatorTok{~}\StringTok{ }\NormalTok{musculo, avaliacao)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = alcool ~ musculo, data = avaliacao)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -15.9499  -4.7403  -0.0235   4.4356  17.4028 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)  49.0316     4.9848   9.836 4.34e-13 ***
+## musculo      -1.3915     0.2401  -5.796 5.14e-07 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 8.401 on 48 degrees of freedom
+## Multiple R-squared:  0.4117, Adjusted R-squared:  0.3994 
+## F-statistic: 33.59 on 1 and 48 DF,  p-value: 5.136e-07
+\end{verbatim}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  residuals(mod)
+## W = 0.97683, p-value = 0.4273
+\end{verbatim}
+
+\includegraphics{note_estatisticaV_regressao_linear_avaliacao_files/figure-latex/unnamed-chunk-5-1.pdf}
+
+\paragraph{Conclusão:}\label{conclusao-1}
+
+\textbf{R:} \emph{O coeficiente de correlação (\(R^2\)) aponta para a
+linearidade dos pontos sobre a reta. Tendo o p-valor do coeficiente
+angular sido significativo, podemos concluir que a angulação da reta não
+é nula, contudo tendo valor estimado para o grau de angulação sido
+negativo (-1,40), considera-se que quanto maior a quantidade de alcool
+presente no corpo menor será a forca muscular (y).}
+
+
+\end{document}

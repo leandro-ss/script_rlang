@@ -1,3 +1,12 @@
+M = matrix( c('a','a','b','c','b','a'), nrow = 2, ncol = 3, byrow = TRUE)
+print(M)
+print(M[,1:2])
+M = M[,1:2]
+print(M)
+print(M[,1:2])
+M = M[,1]
+
+
 dataset <- read.csv("dataset/trabalho.csv")
 head(dataset); tail (dataset); levels(dataset$Turno)
 mod <- lm( TMP ~ Experiencia, data=dataset); summary(mod)

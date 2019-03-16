@@ -1,0 +1,163 @@
+---
+title: "Note de Atividades do Curso de Estatistica Aplicada"
+output: html_notebook
+---
+# Ref. http://www.leg.ufpr.br/Rpira/Rpira/node13.html
+**Constantes do Problea**
+```{r}
+P_90=qnorm(.90)
+P_95=qnorm(.95)
+P_99=qnorm(.99)
+```
+
+**Exercício 1**: Por analogia a produtos similares, o tempo de reação de um novo medicamento pode ser considerado como tendo distribuição Normal com desvio-padrão igual a 2 minutos (amédia é desconhecida). Vinte pacientes foram sorteados, receberam o medicamente e tiveram seu tempo de reação anotado. Os dados foram os seguintes (em minutos): 2.9, 3.4, 3.5, 4.1, 4.6,
+4.7, 4.5, 3.8, 5.3, 4.9, 4.8, 5.7, 5.8, 5.0, 3.4, 5.9, 6.3, 4.6, 5.5, e 6.2. Obtenha um intervalo de confiança para o tempo médio de reação com 95% de confiança (z=1,96).
+```{r}
+a=c(2.9, 3.4, 3.5, 4.1, 4.6,4.7, 4.5, 3.8, 5.3, 4.9, 4.8, 5.7, 5.8, 5.0, 3.4, 5.9, 6.3, 4.6, 5.5,6.2)
+a.n<-length(a)
+a.m<-mean(a)
+a.v<-var(a)
+a.sd<-2
+
+c(a.m + (P_95 *a.sd/a.n), a.m - (P_95 *a.sd/a.n))
+
+```
+
+
+**Exercício 2**: Uma amostra de 25 observações de uma distribuição com média desconhecida e
+variância 16 foi coletada e forneceu uma média amostral de 8. Construa intervalos com
+confiança 90%, 95% e 99%. Comente as diferenças encontradas.
+```{r}
+P_90=qnorm((.90)/2)
+P_95=qnorm((.95)/2)
+P_99=qnorm((.99)/2)
+
+a.n=25
+a.m=8
+a.v=16
+
+c(a.m + (P_90 *sqrt(a.v)/a.n), a.m - (P_90 *sqrt(a.v)/a.n))
+c(a.m + (P_95 *sqrt(a.v)/a.n), a.m - (P_95 *sqrt(a.v)/a.n))
+c(a.m + (P_99 *sqrt(a.v)/a.n), a.m - (P_99 *sqrt(a.v)/a.n))
+```
+
+
+
+**Exercício 3**: Num grupo de pacientes, o nível de colesterol é uma variável aleatória com distribuição
+Normal de média desconhecida e variância 64 (mg/ml2).
+
+A) Para uma amostra de 46 indivíduos que forneceu nível médio de colesterol de 120 mg/ml, construa
+o intervalo de confiança de 95%.
+```{r}
+a.n=46
+a.m=120
+a.v=64
+
+c(a.m + (P_90 *sqrt(a.v)/a.n), a.m - (P_90 *sqrt(a.v)/a.n))
+c(a.m + (P_95 *sqrt(a.v)/a.n), a.m - (P_95 *sqrt(a.v)/a.n))
+c(a.m + (P_99 *sqrt(a.v)/a.n), a.m - (P_99 *sqrt(a.v)/a.n))
+```
+
+B) Se você desejasse diminuir a amplitude do intervalo, quais seriam suas alternativas?
+```{r}
+paste("Aumentar o grau de confiança ou aumentar a amostra")
+```
+
+**Exercício 4**: O consumo de combustível é uma variável aleatória com parâmetros dependendo do tipo
+de veículo. Suponha que, para um certo automóvel, o desvio-padrão do consumo seja conhecido e
+igual a 2 km/l. Porém precisamos de informações sobre o consumo médio. Para tal, coletamos uma
+amostra de 40 automóveis desse modelo e observamos o seu consumo.
+
+A) Quem seria um estimador do consumo médio para todos os automóveis desse tipo?
+```{r}
+paste("O estimador é x barra")
+```
+
+B) Se a amostra forneceu um consumo médio de 9,3 km/l, construa um intervalo de confiança de 90%
+para a média de consumo desses carros.
+```{r}
+a.n=40
+a.sd=2
+a.m=9.3
+
+c(a.m + (P_90 *a.sd/sqrt(a.n)), a.m - (P_90 *a.sd/sqrt(a.n)))
+```
+C) Qual deve ser o tamanho da amostra se eu quiser um erro de no máximo 0,3 com 95% de confiança?
+```{r}
+a.n=170
+a.sd=2
+a.m=9.3
+
+P_95 * a.sd/sqrt(a.n)
+```
+**Exercício 5**: Um fabricante afirma que sua vacina contra gripe imuniza em 80% dos casos. Uma
+amostra de 25 pessoas que tomaram a vacina foi sorteada e testes foram feitos para verificar a
+imunização ou não desses indivíduos. Se o fabricante estiver certo, qual é a probabilidade da
+proporção de imunizados na amostra ser inferior à 0.75? E superior à 0.85?
+```{r}
+a.n=25
+a.p=0.8
+
+1 - (qnorm (0.85, mean=0.8, sd=sqrt(0.8*(1-0.8)/25)) - qnorm (0.75, mean=0.8, sd=sqrt(0.8*(1-0.8)/25)))
+```
+
+**Exercício 6**: Considere o exercício 1. Refaça o intervalo de confiança sem o conhecimento do
+desvio-padrão. Compare os intervalos.
+```{r}
+a<-c(2.9, 3.4, 3.5, 4.1, 4.6,4.7, 4.5, 3.8, 5.3, 4.9, 4.8, 5.7, 5.8, 5.0, 3.4, 5.9, 6.3, 4.6, 5.5,6.2)
+a.n<-length(a)
+a.m<-mean(a)
+a.v<-var(a)
+a.sd<- sd(a)
+
+c(a.m + (P_95 *a.sd/sqrt(a.n)), a.m - (P_95 *a.sd/sqrt(a.n)))
+```
+
+**Exercício 7**: Admitindo que a pressão arterial em homens siga o modelo Normal, 7 pacientes
+foram sorteados e tiveram sua pressão medida com os seguintes resultados: 84, 81, 77, 85, 69,
+80 e 79. Determine o intervalo de confiança para μ com coeficiente de confiança γ = 95%.
+```{r}
+a<-c(84,81,77,85,69,80,79)
+a.n<-length(a)
+a.m<-mean(a)
+a.v<-var(a)
+a.sd<- sd(a)
+
+c(a.m - (P_95 *a.sd/sqrt(a.n)), a.m + (P_95 *a.sd/sqrt(a.n)))
+```
+
+**Exercício 8**: Numa pesquisa com 50 eleitores, o candidato José obteve 0,34 da preferência dos eleitores. Construa, para a confiança de 95%, um intervalo para a proporção de votos a serem recebidos pelo candidato supondo que a eleição fosse feita nesse momento.
+```{r}
+a.n<-50
+a.p<-0.34
+
+c(a.p - (P_95 *sqrt(a.p*(1-a.p)/a.n)), a.p + (P_95 * sqrt(a.p*(1-a.p)/a.n)))
+```
+**Exercício 9** : Uma amostra aleatória de 625 donas de casa revela que 70% delas preferem a marca de detergente A. Construa um intervalo de confiança para a proporção de donas de casa que preferem A com coeficiente de confiança de 95%. 
+```{r}
+a.n<-625
+a.p<-0.7
+
+c(a.p - (P_90 *sqrt(a.p*(1-a.p)/a.n)), a.p + (P_90 * sqrt(a.p*(1-a.p)/a.n)))
+```
+
+**Exercício 10**: Numa pesquisa de mercado, desejamos estimar a proporção de pessoas que compram um determinado sabonete.
+
+A) Se numa amostra de tamanho 100, a aceitação do produto foi de 0,8, qual o intervalo de
+confiança com 95% de confiança para a proporção de pessoas que compram o produto?
+```{r}
+a.n<-100
+a.p<-0.8
+c(a.p - (P_95 *sqrt(a.p*(1-a.p)/a.n)), a.p + (P_95 * sqrt(a.p*(1-a.p)/a.n)))
+```
+
+B) Se sabemos que a aceitação do produto é no mínimo 0,8, qual deve ser o tamanho da
+amostra para garantir um erro de 0,05 com coeficiente de confiança 90%?
+```{r}
+a.n<-10000000000
+a.p<-0.8
+
+p = P_90 * a.p/sqrt(a.p-(1-a.p)/a.n)
+
+paste("não é possivel chegar a uma taxa de erro de 0.05")
+```

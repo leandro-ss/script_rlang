@@ -1,0 +1,72 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r }
+if(!require(ggplot2)){install.packages('ggplot2')}
+if(!require(tidyverse)){install.packages('tidyverse')}
+if(!require(cluster)){install.packages('cluster')}
+if(!require(dplyr)){install.packages('dplyr')}
+hatco_dataset <- read.csv('dataset/hatco.csv',sep=",", dec=".", header = T) %>%
+  select(X1:X7) %>% 
+  mutate(observ = 1:nrow(hatco)) %>%
+  scale() %>%
+  as.data.frame()
+```
+
+## Including Plots
+```{r pressure, echo=FALSE}
+hatco <- hatco_dataset
+```
+
+### 1 Distancia ou Correlacao?
+*R:* Dedende do objetivo e das variaveis, pois se tenho intencao de verificar a tendencia de cada observacao em relacao a essas variaveis (X1:X7), usaria correlacao ao inves da distancia. A distancia vai mostrar o quanto as variaveis sao diferentes entre as observacoes (notas altas e notas baixas), ja a correlacao vai mostrar se as variaveis se comportam em um mesmo padrao entre as observacoes (pex:nota baixa produto - nota baixa pos venda /nota baixa produto - nota baixa pos venda )
+
+## 1 Estandardizar variáveis?
+```{r}
+summary(hatco)
+```
+Vejo que existe diferencas de escala entre as variavies, isso sujere que os dados deveriam ser estandartizados.
+
+```{r}
+head(hatco)
+```
+
+## 2 Usar Análise de agrupamento hierárquico.
+```{r fig.height=2, fig.width=5, message=FALSE, warning=FALSE}
+plot(hclust(dist(hatco), method = 'single'));
+```
+```{r fig.height=2, fig.width=5, message=FALSE, warning=FALSE}
+plot(hclust(dist(hatco), method = 'complete'));
+```
+```{r fig.height=2, fig.width=5, message=FALSE, warning=FALSE}
+plot(hclust(dist(hatco), method = 'centroid'));
+```
+```{r fig.height=2, fig.width=5, message=FALSE, warning=FALSE}
+plot(hclust(dist(hatco), method = 'ward.D2'));
+```
+
+
+```{r fig.height=2, fig.width=5, message=FALSE, warning=FALSE}
+hatco %>%
+  gather(key="Variavel", value="Valor",-observ) %>%
+  ggplot(aes(x=Variavel, y=Valor, group=observ))+
+    geom_line()+
+    theme(legend.position = "none", legend.title = element_blank())
+```
+O comportamento entre as variaveis para as observacoes parece ser semelhante , porem pode ser devido a escala das variaveis.
+
+## 3 Qual método utilizar?
+## 4 Quantos agrupamentos devemos ter?
+## 5 Construir gráfico “cotovelo”.
+## 6 Existem observações atípicas?
+## 7 Avaliar as variáveis utilizadas entre grupos, com 2 e 4 grupos definidos.
+## 8 Quais variáveis tem maiores/menores valores para os grupos?
+## 9 Os grupos são verdadeiramente distintos?
+
+

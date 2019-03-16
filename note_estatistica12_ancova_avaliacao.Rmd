@@ -1,0 +1,200 @@
+---
+title: "MANOVA  - Avaliação Individual"
+author: "Leandro Sampaio Silva"
+date: "7 de dezembro de 2018"
+output.html_document.df_print: 'paged'
+---
+
+```{r setup, include=FALSE, warning=FALSE, error=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+if(!require(ggplot2)){install.packages('ggplot2')}
+if(!require(dplyr)){install.packages('dplyr')}
+if(!require(tidyr)){install.packages('tidyr')}
+if(!require(mvnormtest)){install.packages('mvnormtest')}
+if(!require(mvoutlier)){install.packages('mvoutlier')}
+if(!require(heplots)){install.packages('biotools')}
+if(!require(jmv)){install.packages('jmv')}
+#if(!require(caret)){install.packages('caret')} NAO FUNCIONA NO MAC
+```
+
+    Essa avaliacao tem a nota final 10,0. Nao esqueca de colocar o seu nome neste relatorio final (cabe?alho do arquivo). O prazo de entrega e mais longo dessa vez: 30 de janeiro de 2019. As questoes estao numeradas de 1 a 10 e valem 1 ponto cada.
+
+Para essa avaliacao e analises, utilizaremos os pacotes `ggplot2`,`dplyr`,`tidyr`,`mvnormtest`, `biotools`, `car` e `jmv` 
+
+## QUESTOES PRATICAS
+
+Para essa avaliacao usaremos dados gerados (`dados_mancova.csv`) sobre um experimento onde foram realizados 4 diferentes tipos de tratamentos (`trata`): `Cana`, `Eucalipto`, `Soja`, `Mata_nativa`; onde os valores de uma variavel qu?mica (`valor`) foram coletadas em 20 pontos (`id`) em dois tempos distintos - coluna `Tempo`: `Tempo1` e `Tempo2`.
+
+```{r}
+df <- read.csv("dataset/dados_mancova.csv");str(df)
+```
+
+Primeiramente, uma analise exploratoria visual dos dados:
+
+```{r}
+ggplot(df, aes(x=as.numeric(profundidade),y=valor, group=trata, color=trata, shape=trata))+
+  geom_point()+geom_smooth()+scale_color_brewer(palette = "Set1")+theme_bw()+
+  facet_grid(.~Tempo)+xlab("Profundidade")+ylab("variavel do solo")
+```
+
+### 1. Por que a MANOVA (ou MANCOVA) seria um tipo de analise indicada neste caso? Explique.
+
+**R:** *Existe mais de uma variavel dependente, consequentemente se propoem a utilizar a manova, caso utiliza-se uma anova simples seria necessario realizar a correcao de Boferrone, por exemplo classificando o trata no entanto como existem variaveis temporais os resultados podem acabar nao sendo conclusivos.*
+
+Para podermos efetuar os testes, precisamos ver os pressupostos dos testes:
+
+ * Linearidade
+ * Independ?ncia
+ * Normalidade
+ * Homocedasticidade
+ * Amostragem sem outliers
+
+A. Transformar os dados em *wide*:
+
+```{r}
+df_wide <- spread(df, profundidade, valor) %>%
+  mutate(Tempo=as.numeric(Tempo),
+         trata=as.factor(trata))
+str(df_wide)
+```
+
+* analises Tempo 1
+Tempo 1 - Teste 1
+
+```{r}
+df_wide %>% filter(Tempo==1)%>%
+  dplyr::select(p0,p10,p20,p30,p40,p50) %>% t() %>%
+  mvnormtest::mshapiro.test()
+```
+
+Tempo 1 - Teste 2
+
+```{r}
+df_wide %>% filter(Tempo==1)%>%
+  with(heplots::boxM(cbind(p0,p10,p20,p30,p40,p50), trata))
+```
+
+Tempo 1 - Teste 3
+
+```{r}
+df_wide %>% filter(Tempo==1)%>%
+  dplyr::select(p0,p10,p20,p30,p40,p50) %>%
+  mvoutlier::aq.plot() 
+```
+
+* analises Tempo 2
+Tempo 2 - Teste 1
+
+```{r}
+df_wide %>% filter(Tempo==1)%>%
+  dplyr::select(p0,p10,p20,p30,p40,p50) %>% t() %>%
+  mvnormtest::mshapiro.test()
+```
+
+Tempo 2 - Teste 2
+
+```{r}
+df_wide %>% filter(Tempo==1)%>%
+  with(heplots::boxM(cbind(p0,p10,p20,p30,p40,p50), trata))
+```
+
+Tempo 2 - Teste 3
+
+```{r}
+df_wide %>% filter(Tempo==1)%>%
+  dplyr::select(p0,p10,p20,p30,p40,p50) %>%
+  mvoutlier::aq.plot() 
+```
+
+
+* analises para ambos os Tempos
+
+ambos os Tempos - Teste 1
+
+```{r}
+df_wide %>% 
+  dplyr::select(p0,p10,p20,p30,p40,p50) %>% t() %>%
+  mvnormtest::mshapiro.test()
+```
+
+ambos os Tempos - Teste 2
+
+```{r}
+df_wide %>% 
+  with(heplots::boxM(cbind(p0,p10,p20,p30,p40,p50), trata))
+```
+
+ambos os Tempos - Teste 3
+
+```{r}
+df_wide %>% 
+  dplyr::select(p0,p10,p20,p30,p40,p50) %>%
+  mvoutlier::aq.plot() 
+```
+
+
+### 2. Interprete as analises em relacao a Linearidade e Independencia. O que pode ser feito se esses pressupostos nao forem alcan?ados? 
+**R:** *No caso a linearidade dos dados atende ao pressuposto, mas caso contrario podemos tentar abordar o problema de outra forma tentando aplicar um modelo quadratico, caso nao haja independencia entre as variaveis podemos tentar aplicar uma conjunto de anovas ou mesmo aplicar um modelo de metricas repetidas.*
+
+### 3. Interprete as analises em relacao a normalidade e homocedasticidade. 
+**R:** *A normalidadde dos dados nao atende ao pressuposto, enquanto a homocedasticidadde quando considera ambos os tempos tambem se torna uma violacao.*
+
+### 4. Interprete as analises em relacao a presenca de outliers. Qual e a sugestao em relacao aos dados?
+**R:** * Os outliers que devem ser justificados e/ou talvez removidos da analise*
+
+Faca as analises usando a funcao `mancova` do pacote `jmv`.
+
+ * Teste A
+
+```{r}
+mancova(data = df_wide[df_wide$Tempo==1,],
+        deps = c('p0', 'p10', 'p20', 'p30', 'p40','p50'),
+        factors = 'trata',
+        boxM = FALSE, shapiro = FALSE, qqPlot = TRUE)
+```
+
+  * Teste B
+
+```{r}
+mancova(data = df_wide[df_wide$Tempo==2,],
+        deps = c('p0', 'p10', 'p20', 'p30', 'p40','p50'),
+        factors = 'trata',
+        boxM = FALSE, shapiro = FALSE, qqPlot = TRUE)
+```
+
+  * Teste C
+
+```{r}
+mancova(data = df_wide,
+        deps = c('p0', 'p10', 'p20', 'p30', 'p40','p50'),
+        factors = 'trata',
+        covs='Tempo',
+        boxM = FALSE, shapiro = FALSE, qqPlot = TRUE)
+```
+
+### 5. Faca a interpretacao do teste A. Existe alguma violacao nos pressupostos?
+**R:** * Nao existe violacoes de pressupostos alem do alto volume de outliers que devem ser justificados e/ou talvez removidos da analise*
+
+### 6. Fa?a a interpreta??o do teste B. Existe alguma viola??o nos pressupostos?
+**R:** * Nao existe violacoes de pressupostos alem do alto volume de outliers que devem ser justificados e/ou talvez removidos da analise*
+
+### 7. Faca a interpretacao do teste C. Existe alguma violacao nos pressupostos?
+**R:** *Sim existe violacao dos pressupostos, o dado nao e homocedastico, nao e independente. Alem da grande presenca de outliers.*
+
+## QUESTOES TEORICAS
+
+### 8. Quais as diferen?as entre MANOVA e analise discriminante? Quais situacoes sao mais adequadas a cada t?cnica multivariada?
+**R:** *A MANOVA eh composta por variaveis qualitativas explicando quantitativas enquanto a na Analise Discriminante soa variaveis quantitativas explicando qualitativas.*
+
+### 9. Como o poder estatistico e afetado por decisoes de delineamento estatistico e de pesquisa? Como voce planejaria um estudo para garantir um poder adequado?
+**R:** *No caso o poder estatistico esta diretamente ligado a forma como a amostra representa a populacao, quanto mais aleatorio a coleta da amostra sobre uma populacao homogenea maior sera o poder estatistico do modelo.*
+
+### 10. Descreva algumas situacoes de analise de dados nas quais MANOVA e MANCOVA seriam adequadas em suas areas de interesse. Descreva os tipos de variaveis ou covariaveis e como elas poderiam estar operando na analise como variaveis e covariaveis?
+**R:** *
+- Separar grupos de servidores com consumos anomalos de CPU e Memoria. 
+- Definir perfis de cliente, seja para sugestoes de compra ou deteccao de fraude.
+- Testes de laborario, classificando amostras de substancias conforme o grau de pureza (poderia apresentar correlacao entre grupos).*
+
+### 11.Conclusao
+**R:** *Nao foi uma boa seguir pela mancova, poderia ter um resultado ancova ou modelos mistos, em tempos diferentes pode nao ser boa
+(p0, ... p50) ~ trata tempo, nao independente os dados sao reamostrados em tempos direferentes.*
