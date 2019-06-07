@@ -1,0 +1,236 @@
+---
+title: "Avaliação de Clusters - Artigo Transando perfil de Personalidade"
+author: "Leandro Sampaio Silva"
+date: "09 de março de 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+if(!require(tidyverse)){install.packages("tidyverse")}
+if(!require(cluster)){install.packages("cluster")}
+if(!require(NbClust)){install.packages("NbClust")}
+if(!require(pvclust)){install.packages('pvclust')}
+if(!require(pvclust)){install.packages('pvclust')}
+if(!require(factoextra)){install.packages("factoextra")}
+if(!require(fpc)){install.packages("fpc")}
+if(!require(dbscan)){install.packages("dbscan")}
+```
+
+
+```{r}
+wss <- function(d) {
+  sum(scale(d, scale = FALSE)^2)
+}
+wrap <- function(i, hc, x) {
+  cl <- cutree(hc, i)
+  spl <- split(x, cl)
+  wss <- sum(sapply(spl, wss))
+  wss
+}
+elbow_plot<- function(data, dissim,met){
+  cl = hclust(dissim, method = met)  
+  res <- sapply(seq.int(1, nrow(data)), 
+                  wrap, h =cl, 
+                  x = data)
+  return (res)
+}
+```
+
+```{r fig.height=2, fig.width=5, message=FALSE, warning=FALSE, paged.print=FALSE}
+dados_s <- na.omit(read.csv('dataset/dados_personalidade_32.csv', sep = ';', dec = ','));
+```
+
+## 2. hc_dist
+Calculo da distancia:
+
+```{r fig.height=2, fig.width=5, message=FALSE, warning=FALSE, paged.print=FALSE}
+distancia <- dist(dados_s); 
+```
+
+### A. Grafico cotovelo
+Vendo o gráfico:
+
+```{r fig.height=2, fig.width=5, message=FALSE, warning=FALSE, paged.print=FALSE}
+elbow_data <- data.frame(ward = elbow_plot(data=dados_s, 
+                                           dissim = distancia, 
+                                           met = "ward.D"),
+                       upgma = elbow_plot(data=dados_s, 
+                                          dissim = distancia, 
+                                          met = "median"),
+                       upgmc = elbow_plot(data=dados_s, 
+                                          dissim = distancia, 
+                                          met = "centroid"),
+                       k = seq.int(1, nrow(dados_s))) %>%
+  gather(key="Metodo",value="WSS", -k)
+
+elbow_data %>%
+  ggplot(aes(x=k,y=WSS, group=Metodo, color=Metodo, linetype=Metodo))+
+  geom_line(size=1)+theme_bw()
+```
+
+### B. Quantos grupos?
+```{r fig.height=2, fig.width=5, message=FALSE, warning=FALSE, paged.print=FALSE}
+ward <- hclust(distancia, method = "ward.D2")
+grupos <- cutree(ward, k = 25)
+```
+
+Pelo pacote `factoextra`
+```{r fig.height=2, fig.width=5, message=FALSE, warning=FALSE, paged.print=FALSE}
+res <- factoextra::hcut(dados_s, k = 25)
+factoextra::fviz_cluster(res)+theme_bw()
+```
+
+Visualizando dendrograma
+```{r}
+fviz_dend(res, rect = TRUE)
+```
+
+### C. Silhouette
+```{r}
+sil <- silhouette(grupos, distancia); plot(sil)
+```
+
+Pelo pacote `factoextra`:
+
+```{r}
+fviz_silhouette(res)
+```
+
+## 3. hc_cor
+  * Calcular a dissimilaridade
+Se fizer `cor()` dos dados, ele calcula a correla??o entre as vari?veis:
+```{r}
+correla<-cor(dados_s);#correla[1:25, 1:25] # correlacao entre variaveis
+corrplot(cor(dados_s), order = "original", tl.col='black', tl.cex=.75) 
+```
+
+Mas n?o ? essa a nossa inten??o, pois queremos saber a correla??o entre as observa??es. Para isso precisamos transpor com a fun??o `t()`:
+```{r}
+correla<-cor(t(dados_s)) # correlacao entre observacoes
+correla[1:5, 1:5] # 5 primeiras linhas e 5 primeiras colunas
+```
+
+Como o nosso intuito ? calcular a dissimilaridade, devemos transformar a similaridade em dissimilarida. Uma das formas ? fazer $1 - cor$:
+```{r}
+dissimil <- 1 - correla # dissimilaridade
+dissimil[1:5,1:5] # 5 primeiras linhas e 5 primeiras colunas
+```
+
+Como a fun??o `hclust()` precisa usar uma matriz triangular, usar `as.dist()` para transformar a matriz em matriz triangular:
+```{r}
+dissimil <- as.dist(dissimil) # transforma em um "triangulo" de distancias
+```
+
+### A. Grafico cotovelo
+Vendo o gr?fico:
+```{r}
+elbow_data <- data.frame(ward = elbow_plot(data=dados_s, 
+                                           dissim = dissimil, 
+                                           met = "ward.D"),
+                       upgma = elbow_plot(data=dados_s, 
+                                          dissim = dissimil, 
+                                          met = "average"),
+                       upgmc = elbow_plot(data=dados_s, 
+                                          dissim = dissimil, 
+                                          met = "centroid"),
+                       k = seq.int(1, nrow(dados_s))) %>%
+  gather(key="Metodo",value="WSS", -k)
+
+elbow_data %>% filter(k<30)%>%
+  ggplot(aes(x=k,y=WSS, group=Metodo, color=Metodo, linetype=Metodo))+
+  geom_line(size=1)+theme_bw()
+```
+
+
+### B. Quantos grupos?
+
+```{r}
+upgma <- hclust(dissimil, method = "average")
+plot(upgma)
+```
+
+
+### C. Silhouette
+
+```{r}
+grupos <- cutree(upgma, k = 20)
+sil <- silhouette(grupos, dissimil)
+plot(sil)
+```
+
+## 4. k_mean
+### A. Grafico cotovelo
+```{r}
+fviz_nbclust(dados_s, kmeans, method = "wss")
+```
+
+
+### B. Quantos grupos?
+```{r}
+dados_km_1 <- kmeans(dados_s, 2, nstart=1)
+dados_km_2 <- kmeans(dados_s, 2, nstart=2)
+dados_km_4 <- kmeans(dados_s, 2, nstart=4)
+dados_km_6 <- kmeans(dados_s, 2, nstart=6)
+
+# Verifique a razao entre SQ intragrupos total e intergrupos
+dados_km_1$tot.withinss/dados_km_1$betweenss
+dados_km_2$tot.withinss/dados_km_2$betweenss
+dados_km_4$tot.withinss/dados_km_4$betweenss
+dados_km_6$tot.withinss/dados_km_6$betweenss
+
+# Compare os grupos resultantes
+table(dados_km_1$cluster, dados_km_6$cluster)
+
+# Alguns grupos (clusters) se mantiveram os mesmos, outros nao
+# Para dados consistentes, voce deve comecar com nstart > 1 
+# ou determine uma estimativa a priori de centroides 
+# (usando grafico cotovelo, pex)
+```
+
+### C. Silhouette
+
+```{r}
+fviz_nbclust(dados_s, kmeans, method = "silhouette")
+```
+
+Para cada obseva??o:
+
+```{r}
+dis <- dist(dados_s)
+res <- kmeans(dados_s, centers = 2)
+grupos <-res$cluster
+sil <- silhouette(grupos, dis)
+plot(sil)
+```
+
+
+## 5. k_medoids
+
+### A. Grafico cotovelo
+
+```{r}
+fviz_nbclust(dados_s, pam, method = "wss")
+```
+
+### B. Quantos grupos?
+
+```{r}
+if(!require(cluster)){install.packages("cluster")}
+pam_k <- cluster::pam(dados_s, k = 9)
+pam_k$silinfo$widths
+plot(silhouette(pam_k))
+```
+
+### C. Silhouette
+
+```{r}
+fviz_nbclust(dados_s, pam, method = "silhouette")
+```
+
+Fazendo para somente dois grupos:
+
+```{r}
+pam_k <- cluster::pam(dados_s, k = 2)
+plot(silhouette(pam_k))
+```

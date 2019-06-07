@@ -1,0 +1,65 @@
+---
+title: "Avaliação Individual - Regressao Linear V"
+author: "Leandro Sampaio"
+date: "15 de julho de 2018"
+output:
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## QUESTÃO 1
+Uma estudante de nutrição visa avaliar a relação entre o consumo de cálcio e o conhecimento sobre cálcio em estudantes de educação física. A tabela abaixo sumariza os dados obtidos por ela.
+Existe uma relação entre o consumo de cálcio e o conhecimento sobre o cálcio nesses estudantes de educação física? A que conclusão é possível chegar? Assuma α = 0,05. Com base nos dados apresentados, é possível estimar a quantidade diária consumida esperada de cálcio em um estudante que obtivesse um escore de 50 pontos?
+```{r}
+avaliacao = read.csv("dataset/avaliacao_calcio.csv")
+colnames(avaliacao)[1] <- "no"     #Participante.número
+colnames(avaliacao)[2] <- "score"  #Escore.de.conhecimento
+colnames(avaliacao)[3] <- "calcio" #Quantidade.de.cálcio.consumida..mg.dia
+
+summary(avaliacao)
+```
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+mod <- lm(calcio ~ score  , avaliacao)
+summary(mod)
+shapiro.test(residuals(mod))
+par(mfrow=c(2,2)); plot(mod)
+```
+#### Conclusão:
+**R:** *Existe correlação ($R^2$) entre o consumo de cálcio e o conhecimento sobre o cálcio dos estudantes. Tendo o p-valor do coeficiente angular sido significativo, podemos concluir que a angulação da reta não é nula, contudo o grau de inclinação fica abaixo 1 e apesar de perceptível a inclinaçao da reta é discreta o que leva a crer que **existe a necessidade de um score considerável para um consumo (y) significativo.** *
+
+```{r}
+novo <- data.frame(score=50)
+predict(mod, novo) 
+```
+**R:** *Estima-se que um estudante com um score de 50 pontos consuma ** aproximadamente 1068 miligramas de cálcio por dia**. *
+
+
+## QUESTÃO 2
+Visando avaliar o efeito do consumo de álcool (em sujeitos que assumiram consumir mais de 100 g por dia) sobre a força da contração muscular, um grupo de pesquisadores (Urbano-Marquez, et al, 1989) avaliou em 50 homens, com auxílio de um miômetro eletrônico, a força de contração do músculo deltoide do braço não dominante. A tabela “Álcool.xls”, em anexo, traz os resultados desses indivíduos expressando uma estimativa do consumo total de álcool ingerido ao longo da vida (em kg de álcool por kg de peso corporal) e força muscular (em kgf). Com base nos dados fornecidos, é possível afirmar a existência de alguma relação entre as variáveis? Seria possível estabelecer um modelo preditivo a partir dos dados? Avalie os pré-requisitos necessários. Qual seria a força muscular esperada do deltoide do braço não dominante de um indivíduo que apresentasse um consumo de 35 kg de álcool por kg de peso corporal, ao longo de sua vida?
+```{r}
+avaliacao = read.csv("dataset/avaliacao_alcool.csv", sep = ",")
+colnames(avaliacao)[1] <- "alcool"
+colnames(avaliacao)[2] <- "musculo"
+```
+
+```{r, warning=FALSE,message=FALSE,echo=FALSE}
+mod <- lm(musculo ~ alcool, avaliacao)
+summary(mod)
+shapiro.test(residuals(mod))
+par(mfrow=c(2,2)); plot(mod)
+```
+
+#### Conclusão:
+**R:** *Sim, é possivel afirmar que existe uma relação entre as variáveis, contudo tendo o valor estimado para o grau de angulação sido negativo (-1,40), considera-se que ** quanto maior a quantidade de álcool presente no corpo menor será a forca muscular (y).** *
+
+```{r}
+novo <- data.frame(alcool=35)
+predict(mod, novo) 
+```
+
+**R:** *Estima-se que um pessoa que ingere 35 kg de álcool por kg de peso corporal, terá aproximadamente ** aproximadamente 16 kg/f de força muscular do deltoide do braço não dominante**. *

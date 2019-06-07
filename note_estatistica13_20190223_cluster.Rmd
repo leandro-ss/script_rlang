@@ -14,7 +14,9 @@ if(!require(NbClust)){install.packages("NbClust")}
 
 
 ```{r}
-hatco_dataset <- read.csv('dataset/hatco.csv',sep=",", dec=".", header = T)
+
+hatco <- read.csv('dataset/hatco.csv',sep=",", dec=".", header = T)
+
 ```
 
 ## 0 Correlação ou Distância?

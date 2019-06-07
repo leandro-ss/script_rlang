@@ -1,0 +1,879 @@
+---
+title: "Clusters"
+author: "UniCSul"
+date: "09 de mar?o de 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+if(!require(tidyverse)){install.packages("tidyverse")}
+if(!require(cluster)){install.packages("cluster")}
+if(!require(NbClust)){install.packages("NbClust")}
+if(!require(pvclust)){install.packages('pvclust')}
+```
+
+Para as aulas usaremos os pacotes `tidyverse`, para manipula??o e observa??o dos dados. `NbClust` e `cluster` (prox aula) para an?lise de clusters.
+
+# Aula 1
+
+
+## Modalidades e Medidas
+
+Uma tabela com 7 observa??es de 5 vari?veis (dados obtidos de Hair et al.)
+
+```{r}
+tabela <- data.frame(Observ = 1:7,
+                     X1 = c(7,9,5,6,1,4,2),
+                     X2 = c(10,9,5,6,2,3,4),
+                     X3 = c(9,8,6,3,2,2,5),
+                     X4 = c(7,9,7,3,1,3,2),
+                     X5 = c(10,9,7,4,2,3,5))
+tabela
+```
+
+Obsevar os dados:
+
+```{r}
+p <- tabela %>% 
+  gather(key="Variavel", 
+         value="Valor",
+         -Observ) %>%
+  ggplot(aes(x=Variavel, 
+             y=Valor,
+             group=Observ,
+             color=factor(Observ)))+
+  geom_line() + theme_classic()
+
+print(p)
+```
+
+
+
+```{r}
+cor(t(tabela[,-1]))
+```
+
+Veja que as observa??es 1, 5 e 6 s?o altamente correlacionadas. Visualizar isso no gr?fico:
+
+```{r}
+p + scale_color_manual(
+    values=c("blue", # 1
+             "grey", # 2
+             "grey",  # 3
+             "grey",  # 4
+             "blue", # 5
+             "grey", # 6
+             "blue"  # 7
+             ))
+
+```
+
+As correla??es negativas fortes s?o observadas entre as observa??es 3 e 4:
+
+```{r}
+p + 
+  scale_color_manual(
+    values=c("grey", # 1
+             "grey", # 2
+             "red",  # 3
+             "red",  # 4
+             "grey", # 5
+             "grey", # 6
+             "grey"  # 7
+             ))
+```
+
+Logo, correla??es n?o veem as similaridades pelos valores, mas pelo comportamento das vari?veis.
+
+Uma forma de calcular a similaridade ? por seu inverso: *dissimilaridade*, que pode ser:
+  
+  * Pela correla??o:
+
+$Dissimilaridade = (1 - corr)$
+
+$Dissimilaridade = \frac{(1 - Corr)}{2}$
+
+$Dissimilaridade = 1 - |(Corr)|$
+
+$Dissimilaridade = \sqrt{1-(corr)^2}$
+
+  * Pela dist?ncia
+  
+    - Dist?ncia Euclidiana:
+
+A dist?ncia Euclidiana usa a hipotenusa de um triangulo retangulo (para 2 pontos separados). usando o exemplo dos jogadores vermelho e azul:
+
+```{r}
+vermelho <- data.frame(x=12, y=9)
+azul <- data.frame(x=0, y=0)
+jogadores <- rbind(vermelho,azul)
+dist(jogadores)
+```
+
+    - Dist?ncia de Manhattan:
+
+```{r}
+dist(jogadores, 'manhattan')
+```
+
+    - Dist?ncia M?xima (Chebychev):
+
+```{r}
+dist(jogadores, 'maximum')
+```
+
+Comparando matriz de correla??o e matriz de dist?ncias:
+
+Matriz de correla??o:
+
+```{r}
+cor(t(tabela[,-1]))
+```
+
+Matriz de dist?ncia:
+
+```{r}
+dist(tabela[,-1])
+```
+
+A dist?ncia de mahalanobis leva em considera??o a vari?ncia-covari?ncia das (correla??es entre as) vari?veis. Portanto, leva em considera??o a dist?ncia do centroide mas tamb?m a vari?ncia (elipse dos pontos).
+
+```{r}
+mahalanobis(tabela[-1], 
+                center = colMeans(tabela[-1]), 
+                cov = var(tabela[,-1]))
+```
+
+Exemplo de calculo:
+
+```{r}
+exemplo <-  
+data.frame(V1=c(3,4,4,2,6,7,6),
+	    V2=c(2,5,7,7,6,7,4))
+
+row.names(exemplo)<- LETTERS[1:7]
+
+ggplot(exemplo,
+	aes(V1,V2))+
+	geom_point(size=3,
+	  	    color="grey")+
+	theme_classic()+
+	xlim(c(0,10))+
+	ylim(c(0,10))+
+	geom_text(aes(
+		label=row.names(exemplo)),
+		hjust=1, 
+		vjust=-1)
+```
+
+* Simples
+
+```{r}
+simples<-hclust(dist(exemplo), method = 'single')
+plot(simples)
+```
+
+* Completo
+
+```{r}
+completo<-hclust(dist(exemplo), method = 'complete')
+plot(completo)
+```
+
+* UPGMA
+
+```{r}
+upgma<-hclust(dist(exemplo), method = 'average')
+plot(upgma)
+```
+
+* UPGMC
+
+```{r}
+upgmc<-hclust(dist(exemplo), method = 'centroid')
+plot(upgmc)
+```
+
+* Ward
+
+```{r}
+ward<-hclust(dist(exemplo), method = 'ward.D2')
+plot(ward)
+```
+
+## Quantos grupos eu formo?
+
+Usando a fun??o `cutree`, voce estabelece a altura (`h=`, *height*) ou n?mero de grupos que voc? considera ideal (*k groups*, `k=`):
+
+```{r}
+por_altura <- cutree(ward, h=5) # por altura
+por_altura
+por_kgrupos <- cutree(ward, k=3) # por k grupos
+por_kgrupos
+exemplo_ward <- mutate(exemplo, por_altura = por_altura, por_kgrupos=por_kgrupos)
+
+```
+
+Visualizando por altura
+
+```{r}
+p<-ggplot(exemplo_ward, aes(V1, V2))+
+  theme_classic()+
+  xlim(c(0,10)) + ylim(c(0,10))+
+  geom_text(aes(label=row.names(exemplo_ward)), hjust=1, vjust=-1)+
+  geom_point(aes( color = factor(por_altura)),size=5)
+p
+```
+
+Visualizando a divisao por k grupos
+
+```{r}
+p+geom_point(aes( color = factor(por_kgrupos)),size=5)
+```
+
+  * Construindo grafico cotovelo
+
+```{r}
+# within sum of squares
+wss <- function(d) {
+  sum(scale(d, scale = FALSE)^2)
+}
+
+# wrap the data
+wrap <- function(i, hc, x) {
+  cl <- cutree(hc, i)
+  spl <- split(x, cl)
+  wss <- sum(sapply(spl, wss))
+  wss
+}
+
+elbow_plot<- function(data, dissim,met){
+  cl = hclust(dissim, method = met)  
+  res <- sapply(seq.int(1, nrow(data)), 
+                  wrap, h =cl, 
+                  x = data)
+    return(res)
+}
+```
+
+Visualizando com os diferentes
+
+```{r}
+elbow_data<-data.frame(ward = elbow_plot(data=exemplo, dissim = dist(exemplo), met = "ward.D"),
+                       upgma = elbow_plot(data=exemplo,dissim = dist(exemplo), met = "median"),
+                       upgmc = elbow_plot(data=exemplo,dissim = dist(exemplo), met = "centroid"),
+                       k = seq.int(1, nrow(exemplo))) %>% gather(key="Metodo",value="WSS",-k)
+
+ggplot(elbow_data, aes(x=k,y=WSS, group=Metodo, color=Metodo, linetype=Metodo))+
+  geom_line(size=3)+theme_bw()
+```
+
+# Aula 2
+
+### Dados de iris
+
+Selecionando os dados:
+
+```{r}
+data(iris)
+iris_s <- select(iris, -Species)
+head(iris_s)
+```
+
+Grafico cotovelo:
+
+```{r}
+elbow_data<-data.frame(ward = elbow_plot(data=iris_s,dissim= dist(iris_s), 
+                                         met = "ward.D"),
+                       upgma = elbow_plot(data=iris_s,dissim= dist(iris_s), 
+                                          met = "median"),
+                       upgmc = elbow_plot(data=iris_s,dissim= dist(iris_s), 
+                                          met = "centroid"),
+                       k = seq.int(1, nrow(iris_s))) %>%
+  gather(key="Metodo",value="WSS",-k)
+elbow_data %>% filter(k<10) %>%
+ggplot(aes(x = k, y = WSS, 
+           group = Metodo, color = Metodo, linetype = Metodo))+
+  geom_line(size=2) + theme_bw()
+```
+
+Metodo de Ward:
+
+```{r}
+dist_iris <- dist(iris_s)
+ward<-hclust(dist_iris, method = 'ward.D2')
+plot(ward)
+```
+
+```{r}
+grupos<-cutree(ward, h=10)
+table(grupos, iris$Species)
+```
+
+
+
+### Usando Correla??o
+
+Como existe uma certa correla??o entre as vari?veis de p?talas e s?palas dentro das esp?cies, o uso de correla??o pode fazer sentido.
+
+Para uma melhor discuss?o sobre o melhor modo de calcular dissimilaridade: http://research.stowers.org/mcm/efg/R/Visualization/cor-cluster/index.htm
+
+```{r}
+dissimilaridade <- 1 - cor(t(iris_s))
+distancia <- as.dist(dissimilaridade)
+ward<-hclust(distancia, method = 'median')
+plot(ward)
+```
+
+
+
+```{r}
+elbow_data<-data.frame(ward = elbow_plot(data=iris_s,dissim =distancia, met = "ward.D"),
+                       upgma = elbow_plot(data=iris_s,dissim =distancia, met = "median"),
+                       upgmc = elbow_plot(data=iris_s,dissim =distancia, met = "centroid"),
+                       k = seq.int(1, nrow(iris_s))) %>% gather(key="Metodo",value="WSS",-k)
+
+elbow_data %>% filter(k<150)%>%
+  ggplot(aes(x=k,y=WSS, group=Metodo, color=Metodo, linetype=Metodo))+
+  geom_line(size=3)+theme_bw()
+
+```
+
+Ficou bem melhor do que quando foi utilizado somente as distancias
+
+```{r}
+plot(hclust(distancia, method = "ward.D2"))
+grupo <- cutree(hclust(distancia, method = "ward.D2"),k=3)
+```
+
+Confrontando com as esp?cies reais:
+
+```{r}
+table(grupo,iris$Species)
+```
+
+http://girke.bioinformatics.ucr.edu/GEN242/pages/mydoc/Rclustering.html
+
+```{r}
+plot(cluster::pam(distancia, 3))
+```
+
+## k-Means
+
+```{r}
+# Carregue e prepare os dados
+data("USArrests")
+dados <- USArrests %>%
+  na.omit() %>% # Remova valores faltantes
+  scale()       # Deixa as variaveis em uma mesma escala
+
+# Fa?a kmeans com dois numeros de "sementes" diferentes: 1 e 2:
+dados_km_1 <- kmeans(dados, 5, nstart=1)
+dados_km_2 <- kmeans(dados, 5, nstart=2)
+dados_km_4 <- kmeans(dados, 5, nstart=4)
+
+# Verifique a razao entre SQ intragrupos total e intergrupos
+dados_km_1$tot.withinss/dados_km_1$betweenss
+dados_km_2$tot.withinss/dados_km_2$betweenss
+dados_km_4$tot.withinss/dados_km_4$betweenss
+
+# Compare os grupos resultantes
+table(dados_km_1$cluster, dados_km_2$cluster)
+
+# Alguns grupos (clusters) se mantiveram os mesmos, outros nao
+# Para dados consistentes, voce deve comecar com nstart > 1 
+# ou determine uma estimativa a priori de centroides 
+# (usando grafico cotovelo, pex)
+```
+
+```{r}
+if(!require(factoextra)){install.packages("factoextra")}
+fviz_nbclust(dados, kmeans, method = "wss") +
+  geom_vline(xintercept = 4, linetype = 2)
+
+```
+## Usando PAM (k-medoids)
+
+```{r}
+if(!require(factoextra)){install.packages("factoextra")}
+if(!require(cluster)){install.packages("cluster")}
+
+pam_k4 <- cluster::pam(dados, k = 4)
+head(pam_k4$silinfo$widths)
+```
+
+Grafico cotovelo (pelo pacote `factoextra`):
+
+```{r}
+factoextra::fviz_nbclust(dados, pam, method = "wss")
+```
+
+Grafico silhouette:
+
+```{r}
+plot(silhouette(pam_k4))
+```
+
+Ver qual o valor de Silhouette m?dio dos grupos com o gr?fico (Pelo pacote `factoextra`). O valor m?dio deve ser o maior poss?vel:
+
+```{r}
+factoextra::fviz_nbclust(dados, pam, method = "silhouette")
+```
+
+
+Com `k` = 2:
+
+```{r}
+pam_k2 <- cluster::pam(dados, k = 2)
+tail(pam_k2$silinfo$widths)
+plot(silhouette(pam_k2))
+```
+
+## DBSCAN
+
+1. Pacotes `fpc` e `dbscan`
+
+```{r}
+if(!require(fpc)){install.packages("fpc")}
+if(!require(dbscan)){install.packages("dbscan")}
+```
+
+2. M?todo de determinar eps ?timo
+
+```{r}
+dbscan::kNNdistplot(dados, k = 2)
+```
+
+3. Fun??o
+
+```{r}
+res_fpc<- fpc::dbscan(data = dados, eps = 1, 
+			MinPts = 2, 
+			scale = FALSE, 
+			method = c("hybrid", "raw", "dist"))
+```
+
+
+4. Visualizar
+
+```{r}
+factoextra::fviz_cluster(res_fpc, dados, geom = "point")
+```
+
+
+# Li??o (dados hatco.csv)
+
+## 1. Ler dados
+
+```{r}
+hatco<-read.csv("dataset/hatco.csv")
+hatco<-hatco[,2:8]  # X1 a X7
+names(hatco) <-c("velo", "preco", "flex", "image", "serv","vendas", "quali")
+hatco_s<-scale(hatco)
+```
+
+## 2. hc_dist
+
+Calculo da distancia:
+
+```{r}
+distancia <- dist(hatco_s)
+```
+
+
+### A. Grafico cotovelo
+
+Vendo o gr?fico:
+
+```{r}
+elbow_data <- data.frame(ward = elbow_plot(data=hatco_s, 
+                                           dissim = distancia, 
+                                           met = "ward.D"),
+                       upgma = elbow_plot(data=hatco_s, 
+                                          dissim = distancia, 
+                                          met = "median"),
+                       upgmc = elbow_plot(data=hatco_s, 
+                                          dissim = distancia, 
+                                          met = "centroid"),
+                       k = seq.int(1, nrow(hatco_s))) %>%
+  gather(key="Metodo",value="WSS", -k)
+
+elbow_data %>% filter(k<30)%>%
+  ggplot(aes(x=k,y=WSS, group=Metodo, color=Metodo, linetype=Metodo))+
+  geom_line(size=1)+theme_bw()
+```
+
+### B. Quantos grupos?
+
+```{r}
+ward <- hclust(distancia, method = "ward.D2")
+grupos <- cutree(ward, k = 5)
+```
+
+Pelo pacote `factoextra`
+
+```{r}
+res <- factoextra::hcut(hatco_s, k = 5)
+factoextra::fviz_cluster(res)+theme_bw()
+```
+
+
+Visualizando dendrograma
+
+
+```{r}
+fviz_dend(res, rect = TRUE)
+```
+
+
+### C. Silhouette
+
+```{r}
+sil <- silhouette(grupos, distancia)
+plot(sil)
+```
+
+Pelo pacote `factoextra`:
+
+```{r}
+fviz_silhouette(res)
+```
+
+## 3. hc_cor
+
+  * Calcular a dissimilaridade
+
+Se fizer `cor()` dos dados, ele calcula a correla??o entre as vari?veis:
+
+```{r}
+correla<-cor(hatco_s) # correlacao entre variaveis
+correla[1:5, 1:5] # 5 primeiras linhas e 5 primeiras colunas
+```
+
+Mas n?o ? essa a nossa inten??o, pois queremos saber a correla??o entre as observa??es. Para isso precisamos transpor com a fun??o `t()`:
+
+```{r}
+correla<-cor(t(hatco_s)) # correlacao entre observacoes
+correla[1:5, 1:5] # 5 primeiras linhas e 5 primeiras colunas
+```
+
+Como o nosso intuito ? calcular a dissimilaridade, devemos transformar a similaridade em dissimilarida. Uma das formas ? fazer $1 - cor$:
+
+```{r}
+dissimil <- 1 - correla # dissimilaridade
+dissimil[1:5,1:5] # 5 primeiras linhas e 5 primeiras colunas
+```
+
+Como a fun??o `hclust()` precisa usar uma matriz triangular, usar `as.dist()` para transformar a matriz em matriz triangular:
+
+```{r}
+dissimil <- as.dist(dissimil) # transforma em um "triangulo" de distancias
+```
+
+### A. Grafico cotovelo
+
+Vendo o gr?fico:
+
+```{r}
+elbow_data <- data.frame(ward = elbow_plot(data=hatco_s, 
+                                           dissim = dissimil, 
+                                           met = "ward.D"),
+                       upgma = elbow_plot(data=hatco_s, 
+                                          dissim = dissimil, 
+                                          met = "average"),
+                       upgmc = elbow_plot(data=hatco_s, 
+                                          dissim = dissimil, 
+                                          met = "centroid"),
+                       k = seq.int(1, nrow(hatco_s))) %>%
+  gather(key="Metodo",value="WSS", -k)
+
+elbow_data %>% filter(k<30)%>%
+  ggplot(aes(x=k,y=WSS, group=Metodo, color=Metodo, linetype=Metodo))+
+  geom_line(size=1)+theme_bw()
+```
+
+
+### B. Quantos grupos?
+
+```{r}
+upgma <- hclust(dissimil, method = "average")
+plot(upgma)
+```
+
+
+### C. Silhouette
+
+```{r}
+grupos <- cutree(upgma, k = 20)
+sil <- silhouette(grupos, dissimil)
+plot(sil)
+```
+
+## 4. k_mean
+
+### A. Grafico cotovelo
+
+```{r}
+fviz_nbclust(hatco_s, kmeans, method = "wss")
+```
+
+
+### B. Quantos grupos?
+
+```{r}
+dados_km_1 <- kmeans(hatco_s, 2, nstart=1)
+dados_km_2 <- kmeans(hatco_s, 2, nstart=2)
+dados_km_4 <- kmeans(hatco_s, 2, nstart=4)
+dados_km_6 <- kmeans(hatco_s, 2, nstart=6)
+
+# Verifique a razao entre SQ intragrupos total e intergrupos
+dados_km_1$tot.withinss/dados_km_1$betweenss
+dados_km_2$tot.withinss/dados_km_2$betweenss
+dados_km_4$tot.withinss/dados_km_4$betweenss
+dados_km_6$tot.withinss/dados_km_6$betweenss
+
+# Compare os grupos resultantes
+table(dados_km_1$cluster, dados_km_6$cluster)
+
+# Alguns grupos (clusters) se mantiveram os mesmos, outros nao
+# Para dados consistentes, voce deve comecar com nstart > 1 
+# ou determine uma estimativa a priori de centroides 
+# (usando grafico cotovelo, pex)
+```
+
+### C. Silhouette
+
+```{r}
+fviz_nbclust(hatco_s, kmeans, method = "silhouette")
+```
+
+Para cada obseva??o:
+
+```{r}
+dis <- dist(hatco_s)
+res <- kmeans(hatco_s, centers = 2)
+grupos <-res$cluster
+sil <- silhouette(grupos, dis)
+plot(sil)
+```
+
+
+## 5. k_medoids
+
+### A. Grafico cotovelo
+
+```{r}
+fviz_nbclust(hatco_s, pam, method = "wss")
+```
+
+### B. Quantos grupos?
+
+```{r}
+if(!require(cluster)){install.packages("cluster")}
+pam_k <- cluster::pam(hatco_s, k = 9)
+pam_k$silinfo$widths
+plot(silhouette(pam_k))
+```
+
+### C. Silhouette
+
+```{r}
+fviz_nbclust(hatco_s, pam, method = "silhouette")
+```
+
+Fazendo para somente dois grupos:
+
+```{r}
+pam_k <- cluster::pam(hatco_s, k = 2)
+plot(silhouette(pam_k))
+```
+
+## Analise de redes
+
+Ver teoria de grafos: N?s, V?rtices e liga??es
+
+### Defini??o
+
+Pacote utilizado `igraph`:
+
+```{r}
+if(!require(igraph)){install.packages('igraph')}
+```
+
+A partir de lista de liga??es (`edgelist`)
+
+```{r}
+amigos<-read.csv('amigos_edgelist.csv')
+amigos_mat<-as.matrix(amigos)
+g <- graph.edgelist(amigos_mat, directed = FALSE)
+plot(g)
+```
+
+A partir de matriz de adjac?ncia
+
+```{r}
+amigos<-read.csv("amigos_adjmat.csv")
+rownames(amigos)<-amigos$X
+amigos<-dplyr::select(amigos,-X)
+amigos_mat<-as.matrix(amigos)
+dim(amigos_mat) # tem que estar quadrada (n x n)
+g <-  graph.adjacency(amigos_mat, mode="undirected", weighted=NULL)
+plot(g)
+```
+
+Use `V()` e `E()` para ver os v?rtices e liga??es da rede `g`.
+Use `gsize()` para contar o n?mero de liga??es em uma rede.
+Use `gorder()` para contar o n?mero de v?rtices em uma rede.
+
+```{r}
+V(g)
+E(g)
+paste("edges = ", gsize(g))  # numero de edges
+paste("vertices = ", gorder(g)) # numero de vertices
+```
+
+### Atributos
+
+```{r}
+genero <- c("M", "M", "F", "M", "M", "M", "F", "M", "M", "F", 
+          "M", "F", "M", "F", "M", "M")
+idades <- c(18, 19, 21, 20, 22, 18, 23, 21, 22, 20, 20, 22, 21, 18, 19, 20)
+
+# Criar novo atibuto do v?rtice chamado de 'genero'
+g <- set_vertex_attr(g, "genero", value = genero)
+
+# Criar novo atibuto da liga??o chamado de 'idade'
+g <- set_vertex_attr(g, "idade", value = idades)
+
+# Ver todos os atributos dos vertices em uma lista
+vertex_attr(g)
+
+# Ver os primeiros 5 v?rtices e seus atributos em um data.frame
+V(g)[[1:5]] 
+```
+
+
+```{r}
+horas <-c(1, 2, 2, 1, 2, 5, 5, 1, 1, 3, 2, 1, 1, 5, 
+         1, 2, 4, 1, 3, 1, 1, 1, 4, 1, 3, 3, 4)
+# Criar novo atributo da liga??o chamado de 'horas'
+g <- set_edge_attr(g, "horas", value = horas)
+
+# View edge attributes of graph object
+edge_attr(g)
+
+# Encontre todos v?rtices que incluam "Kaique"
+E(g)[[inc('Kaique')]]  
+
+# Encontre pares que ficaram mais do que 4 horas juntos
+E(g)[[horas>=4]]
+```
+
+
+### Estrutura
+
+Vizinhos
+
+```{r}
+neighbors(g,"Kaique")
+```
+
+Caminhos
+
+```{r}
+farthest_vertices(g)
+```
+Diametro (pessoas na periferia)
+
+```{r}
+get_diameter(g)
+```
+
+Relacao entre vertices:
+
+```{r}
+ego(g, 3, "Thiago")
+```
+
+V?rtices importantes e Influentes
+
+* Grau (degree)
+
+N?mero de liga??es adjacentes.
+
+```{r}
+degree(g, mode=c("out"))
+```
+
+* Entrela?amento (betweenness)
+De um v?rtice ou de uma liga??o. ? o n?mero de caminhos que passam pelo analisado (v?rtice ou liga??o).
+
+```{r}
+betweenness(g, directed = FALSE,
+			normalized=TRUE)
+```
+
+* Centralidade do autovetor (eigenvector centrality)
+V?rtices com alto valor s?o v?rtices ligados a v?rtices que apresentam muitos v?rtices ligados a muitos v?rtices...
+
+```{r}
+eigen_centrality(g)$vector
+```
+
+Densidade
+
+```{r}
+edge_density(g)
+```
+
+Media dos comprimentos
+
+```{r}
+mean_distance(g)
+```
+
+Gera uma rede aleat?ria a partir do numero de vertices e densidade igual a rede original
+
+```{r}
+erdos.renyi.game(n=gorder(g), p.or.m = edge_density(g),type='gnp')
+```
+
+### Aleatoriza??es
+
+1. Gerar 1000 gr?ficos aleat?rios baseados na rede original. Ou seja: com o mesmo n?mero de v?rtices e densidade aproximada
+
+2. Calcular a m?dia do comprimento dos caminhos da rede original.
+
+3. Calcular a m?dia do comprimento dos caminhos das 1000 redes aleat?rias
+
+4. Determine quantas redes aleat?rias mostrar valores maiores ou menores que a rede original
+
+```{r}
+gl <- vector("list", 1000)
+for(i in 1:1000){
+	    gl[[i]] <- erdos.renyi.game(
+				n = gorder(g),
+				p.or.m = edge_density(g),
+				type = "gnp")
+				}
+```
+
+Gerar histograma
+
+
+### Exerc?cios
+
+Ver [cola](http://kateto.net/networks-r-igraph)
+
+1. Leia os dados
+
+2. Atribua a uma rede
+
+3. Veja os atributos da rede
+
+4. Calcule os n?s, entrela?amento e centralidade do autovetor
+
+5. Calcule Densidade, Assortatividade e Reciprocidade da rede
+
+6. Estabele?a as comunidades pelos algoritmos Fast-greedy e Edge-betweenness

@@ -1,0 +1,125 @@
+---
+title: "Lista de Exercícios II - Estatística Básica II"
+output:
+  html_document:
+    df_print: paged
+  html_notebook: default
+  pdf_document: default
+---
+
+1)(1.0) Sabe-se que os parafusos produzidos por certa empresa tem probabilidade de 0,01 de apresentar defeitos, independentemente uns dos outros. A empresa vende os parafusos em pacotes com 10 e oferece uma garantia de devolucao de dinheiro se mais de 1 parafuso em 10 apresentar defeito. Que proporcao de pacotes vendidos a empresa deve trocar?
+```{r}
+paste ("Somente" , round (sum (1 - pbinom(1 , prob = 0.01,size = 10))*100, 2),"% precisaram ser trocados" )
+```
+
+2. (2.0) Jogam-se duas moedas. A primeira moeda da cara com probabilidade 0.6, e a segunda, com probabilidade
+O.4. Suponha que os resultados das jogadas sejam independentes e que X seja igual ao número total de caras
+que saem.
+a) Determine P (X = 1).
+```{r}
+  dbinom(1, prob = (0.6 * 0.4) ,size = 2)
+```
+b) Determine E[X].
+```{r}
+  0*(0.4*0.6) + 1*((0.4*0.6)+(0.4*0.6)) + 2*(0.4*0.6)
+```
+
+3. (2.0) Cem pessoas terão seu sangue examinado para determinar se possuem ou não determinada doença. Entretanto, em vez de testar cada indivı́duo separadamente, decidiu-se primeiro colocar as pessoas em grupo de 10. Amostras de sangue das 10 pessoas de cada grupo serão analisadas em conjunto. Se o teste der negativo, apenas um teste será suficiente para as 10 pessoas. Por outro lado, se o teste der positivo, cada uma das demais pessoas também será examinada e, no total, 11 testes serão feitos no grupo em questão. Suponha que a
+probabilidade de se ter a doença seja de 0.1 para qualquer pessoa, de forma independente, e calcule o número esperado de testes necessários para cada grupo (observe que supomos que o teste conjunto dará positivo se pelo menos uma pessoa no conjunto tiver a doença).
+```{r}
+  (dbinom(1, prob=0.1, size = 10) * 11) + (1 - (dbinom(1, prob=0.1, size = 10)) * 1)
+```
+
+4. (1.0) Um homem diz ter percepção extrassensorial. Como um teste, uma moeda honesta é jogada 10 vezes e pede-se ao homem que preveja o resultado. Ele acerta 7 vezes em 10. Qual é a probabilidade de que ele consiga o mesmo ı́ndice de acertos mesmo não tendo percepção extrassensorial?
+```{r}
+  1- sum(dbinom(seq (1,7, 1), prob=0.5, size = 10))
+```
+
+<!-- 5. (1.0) Se você compra um bilhete de loteria que concorre em 50 sorteios. em cada um dos quais sua chance de ganhar é de h, qual é a probabilidade (aproximada) de que você ganhe um prêmio: -->
+(a) pelo menos uma vez?
+```{r}
+  1- punif(1, min = 0 ,max  = 50)
+```
+(b) exatamente uma vez?
+```{r}
+  dunif(1, min = 0 ,max  = 50)
+```
+(c) pelo menos duas vezes?
+```{r}
+  1- punif(2, min = 0, max = 50)
+```
+
+6. (2.0) A probabilidade de sair com um full house em uma mão de pôquer é de aproximadamente 0,0014. Determine a probabilidade de que, em 1000 mãos de pôquer, você receba pelo menos 2 full houses.
+```{r}
+  1 - pbinom(2, prob=0.0014, size = 1000)
+```
+
+7. (1.0) Suponha que um conjunto de 100 itens contenha 6 itens defeituosos e 94 que funcionem normalmente. Se X é o número de itens defeituosos em uma amostra de 10 itens escolhidos aleatoriamente do conjunto, determine:
+(a) P (X = O)
+```{r}
+  dbinom(0, prob=0.06, size = 100)
+```
+(b) P (X > 2)
+```{r}
+  pbinom(2, prob=0.06, size = 100)
+```
+
+8. (1.0) Um comprador de transistores os compra em lotes de 20. É usual que ele inspecione aleatoriamente 4 componentes de um lote e que aceite este lote apenas se nenhum dos 4 apresentar defeitos. Se cada componente de um lote é, independentemente dos demais, defeituoso com probabilidade 0.1, qual é a proporção de lotes rejeitados?
+P (X <= 4)
+```{r}
+  1 - sum (dbinom(1:4, prob=0.1, size = 20))
+```
+
+9. (1.0) Ônibus chegam em uma determinada parada em intervalos de 15 minutos começando as 7:OO. Isto é, eles chegam às 7:00,7:15,7:30,7:45, e assim por diante. Se um passageiro chega na parada em um instante de tempo que é uniformemente distribuı́do entre 7:00 e 7:30, determine a probabilidade de que ele espere:
+a) menos que 5 minutos por um ônibus
+```{r}
+ punif(15,0,30)-punif(10,0,30) + punif(30,0,30)-punif(25,0,30)
+```
+b) mais de 10 minutos por um ônibus
+```{r}
+ punif(5,0,30)-punif(0,0,30) + punif(20,0,30)-punif(15,0,30)
+```
+
+10. (2.0) Um homem praticando tiro ao alvo recebe 10 pontos se o tiro estiver a 1 cm do alvo, 5 pontos se estiver entre 1 e 3 cm do alvo, e 3 pontos se estiver entre 3 e 5 cm do alvo. Determine o número esperado de pontos que ele receberá se a distância do ponto de tiro até o alvo for uniformemente distribuı́da entre O e 10.
+```{r}
+ (sum (punif(1,0,10)-punif(0,0,10)) * 10) + (sum (punif(3,0,10)-punif(1,0,10)) * 5) + (sum (punif(5,0,10)-punif(3,0,10)) * 3)
+```
+
+11. (1.0) Suponha que X seja uma variável aleatória normal com média 0,5. Se P(X>9)=0.2, qual é o valor de Var(X), aproximadamente? (Use a ideia da normal padrão)
+```{r}
+  qnorm( p = 0.2 , mean = 0.5)^2
+```
+
+12. (2.0) O número de minutos jogados por certo jogador de basquete em um jogo aleatoriamente escolhido é uma variável aleatória cuja função densidade de probabilidade é dada na Figura 1 / Figure 1: Distribuição de probabilidade dos jogadores de basquete
+Determine a probabilidade de que o jogador jogue
+a) mais de 15 minutos
+```{r}
+  1 - qunif(0.025,0,5)
+```
+b) entre 20 e 35 minutos
+```{r}
+  qunif(0.05,0,10) + qunif(0.025,0,5)
+```
+c) menos de 30 minutos
+```{r}
+  qunif(0.025,0,10) + qunif(0.05,0,10)
+```
+d) mais de 36 minutos
+```{r}
+  qunif(0.025,0,4)
+```
+
+13. (1.0) Um teste de QI de uma pessoa aleatoriamente escolhida indica uma nota que é aproximadamente uma variável aleatória normal com média 100 e desvio padrão 15. Qual é a probabilidade de que tal nota:
+(a) esteja acima de 125
+```{r}
+  1 - pnorm(125, mean = 100, sd = 15)
+```
+(b) entre 90 e 110
+```{r}
+  sum (dnorm( seq(90,110,1), mean = 100, sd = 15))
+```
+
+14. (2.0) Suponha que o tempo de viagem de sua casa ao seu escritório seja normalmente distribuı́do com média de 40 minutos e desvio padrão de 7 minutos. Se você quer estar 95% certo de que você não chegará atrasado para um compromisso no escritório às 13:00, qual é o último horário no qual você deverá sair de casa?
+```{r}
+  paste("Sair com uma antecendência de ", qnorm( p = 0.95, mean = 40, sd = 7), "minutos" )
+```

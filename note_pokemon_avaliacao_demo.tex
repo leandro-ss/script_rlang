@@ -1,0 +1,448 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={Avaliação de Clusters - Artigo Transando perfil de Personalidade},
+            pdfauthor={Leandro Sampaio Silva},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{Avaliação de Clusters - Artigo Transando perfil de Personalidade}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{Leandro Sampaio Silva}
+    \preauthor{\centering\large\emph}
+  \postauthor{\par}
+      \predate{\centering\large\emph}
+  \postdate{\par}
+    \date{09 de março de 2019}
+
+
+\begin{document}
+\maketitle
+
+\hypertarget{resumo}{%
+\subsubsection{Resumo}\label{resumo}}
+
+\hypertarget{objetivo}{%
+\subsection{Objetivo}\label{objetivo}}
+
+Verificar a possibilidade de se traçar um perfil da personalidade
+juntando certos aspectos e grupos (clusters). Através da
+\url{https://quantdev.ssri.psu.edu/sites/qdev/files/IntroBasicEFA_2017_1013.html}
+Foram utilizados os dados provenientes de um estudo feito atraves de
+analise fatorial, presume-se que análise fatorial ira discriminar certos
+aspectos das persolidades dos individuos, para meu contento espero
+conseguir um resultado similar atraves da analise de clusters onde sera
+possivel ter uma visao grafista dos atraves de uma analise exploratoria
+que viabilizaria uma visao de como os perfis compartilham
+caracteristicas ao mesmo tempo que apresentam caracteristicas proprias.
+
+\hypertarget{resultadoconclusao}{%
+\subsection{Resultado/Conclusao}\label{resultadoconclusao}}
+
+Verificou se que apesar dos resultados serem significativos, houve uma
+grande diferença entre os resultados obtidos, tendo que as tecnicas são
+complementares e nao sobrepostas. Para uma visão clara dos dados e
+resutlados, se faz necessária a diminuição do número de variáveis de
+forma que elas ainda sejam unicas e explicaveis para então a montagem do
+cluster afim de verificar as relações em comum e nao a correlacao em si.
+\#\# Palavra-Chave cluster,fatorial,personalidades,estatistica,
+
+\hypertarget{bibligrafia}{%
+\subsection{Bibligrafia}\label{bibligrafia}}
+
+\url{https://quantdev.ssri.psu.edu/sites/qdev/files/IntroBasicEFA_2017_1013.html}
+\url{https://sillasgonzaga.github.io/2016-06-28-clusterizacaoPaises/}
+
+Definição das funções auxiliares para o modelo
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{wss <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(d) \{}
+  \KeywordTok{sum}\NormalTok{(}\KeywordTok{scale}\NormalTok{(d, }\DataTypeTok{scale =} \OtherTok{FALSE}\NormalTok{)}\OperatorTok{^}\DecValTok{2}\NormalTok{)}
+\NormalTok{\}}
+\NormalTok{wrap <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(i, hc, x) \{}
+\NormalTok{  cl <-}\StringTok{ }\KeywordTok{cutree}\NormalTok{(hc, i)}
+\NormalTok{  spl <-}\StringTok{ }\KeywordTok{split}\NormalTok{(x, cl)}
+\NormalTok{  wss <-}\StringTok{ }\KeywordTok{sum}\NormalTok{(}\KeywordTok{sapply}\NormalTok{(spl, wss))}
+\NormalTok{  wss}
+\NormalTok{\}}
+\NormalTok{elbow_plot<-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(data, dissim,met)\{}
+\NormalTok{  cl =}\StringTok{ }\KeywordTok{hclust}\NormalTok{(dissim, }\DataTypeTok{method =}\NormalTok{ met)  }
+\NormalTok{  res <-}\StringTok{ }\KeywordTok{sapply}\NormalTok{(}\KeywordTok{seq.int}\NormalTok{(}\DecValTok{1}\NormalTok{, }\KeywordTok{nrow}\NormalTok{(data)), }
+\NormalTok{                  wrap, }\DataTypeTok{h =}\NormalTok{cl, }
+                  \DataTypeTok{x =}\NormalTok{ data)}
+  \KeywordTok{return}\NormalTok{ (res)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+Para resolver o problema dos valores ausentes (os NA), poderia ser
+aplicada uma técnica robusta, mas como esta é uma análise simples ou
+optei por remover os países que tinham algum dado faltando.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dados_s <-}\StringTok{ }\KeywordTok{na.omit}\NormalTok{(}\KeywordTok{read.csv}\NormalTok{(}\StringTok{'dataset/dados_personalidade_32.csv'}\NormalTok{, }\DataTypeTok{sep =} \StringTok{';'}\NormalTok{, }\DataTypeTok{dec =} \StringTok{','}\NormalTok{)) }\OperatorTok{%>%}\StringTok{ }\KeywordTok{scale}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{hc_dist}{%
+\subsection{2. hc\_dist}\label{hc_dist}}
+
+Calculo da distancia:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{distancia <-}\StringTok{ }\KeywordTok{dist}\NormalTok{(dados_s); }
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{a.-grafico-cotovelo}{%
+\subsubsection{A. Grafico cotovelo}\label{a.-grafico-cotovelo}}
+
+Vendo o gráfico:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{elbow_data <-}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{ward =} \KeywordTok{elbow_plot}\NormalTok{(}\DataTypeTok{data=}\NormalTok{dados_s, }
+                                           \DataTypeTok{dissim =}\NormalTok{ distancia, }
+                                           \DataTypeTok{met =} \StringTok{"ward.D"}\NormalTok{),}
+                       \DataTypeTok{upgma =} \KeywordTok{elbow_plot}\NormalTok{(}\DataTypeTok{data=}\NormalTok{dados_s, }
+                                          \DataTypeTok{dissim =}\NormalTok{ distancia, }
+                                          \DataTypeTok{met =} \StringTok{"median"}\NormalTok{),}
+                       \DataTypeTok{upgmc =} \KeywordTok{elbow_plot}\NormalTok{(}\DataTypeTok{data=}\NormalTok{dados_s, }
+                                          \DataTypeTok{dissim =}\NormalTok{ distancia, }
+                                          \DataTypeTok{met =} \StringTok{"centroid"}\NormalTok{),}
+                       \DataTypeTok{k =} \KeywordTok{seq.int}\NormalTok{(}\DecValTok{1}\NormalTok{, }\KeywordTok{nrow}\NormalTok{(dados_s))) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{gather}\NormalTok{(}\DataTypeTok{key=}\StringTok{"Metodo"}\NormalTok{,}\DataTypeTok{value=}\StringTok{"WSS"}\NormalTok{, }\OperatorTok{-}\NormalTok{k)}
+\NormalTok{elbow_data }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{k,}\DataTypeTok{y=}\NormalTok{WSS, }\DataTypeTok{group=}\NormalTok{Metodo, }\DataTypeTok{color=}\NormalTok{Metodo, }\DataTypeTok{linetype=}\NormalTok{Metodo))}\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{(}\DataTypeTok{size=}\DecValTok{1}\NormalTok{)}\OperatorTok{+}\KeywordTok{theme_bw}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{note_pokemon_avaliacao_demo_files/figure-latex/unnamed-chunk-4-1.pdf}
+
+\hypertarget{b.-quantos-grupos}{%
+\subsubsection{B. Quantos grupos?}\label{b.-quantos-grupos}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ward <-}\StringTok{ }\KeywordTok{hclust}\NormalTok{(distancia, }\DataTypeTok{method =} \StringTok{"ward.D2"}\NormalTok{)}
+\NormalTok{grupos <-}\StringTok{ }\KeywordTok{cutree}\NormalTok{(ward, }\DataTypeTok{k =} \DecValTok{25}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Pelo pacote \texttt{factoextra}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{res <-}\StringTok{ }\NormalTok{factoextra}\OperatorTok{::}\KeywordTok{hcut}\NormalTok{(dados_s, }\DataTypeTok{k =} \DecValTok{25}\NormalTok{)}
+\NormalTok{factoextra}\OperatorTok{::}\KeywordTok{fviz_cluster}\NormalTok{(res)}\OperatorTok{+}\KeywordTok{theme_bw}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{note_pokemon_avaliacao_demo_files/figure-latex/unnamed-chunk-6-1.pdf}
+
+Visualizando dendrograma
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{fviz_dend}\NormalTok{(res, }\DataTypeTok{rect =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{note_pokemon_avaliacao_demo_files/figure-latex/unnamed-chunk-7-1.pdf}
+
+\hypertarget{c.-silhouette}{%
+\subsubsection{C. Silhouette}\label{c.-silhouette}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sil <-}\StringTok{ }\KeywordTok{silhouette}\NormalTok{(grupos, distancia); }\KeywordTok{plot}\NormalTok{(sil)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{note_pokemon_avaliacao_demo_files/figure-latex/unnamed-chunk-8-1.pdf}
+
+Pelo pacote \texttt{factoextra}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{fviz_silhouette}\NormalTok{(res)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    cluster size ave.sil.width
+## 1        1   12          0.05
+## 2        2   22          0.05
+## 3        3   16          0.00
+## 4        4    7          0.12
+## 5        5   17          0.01
+## 6        6   14         -0.04
+## 7        7   10          0.02
+## 8        8   12          0.07
+## 9        9    6          0.01
+## 10      10   11          0.03
+## 11      11   14          0.08
+## 12      12   12          0.13
+## 13      13   10          0.12
+## 14      14    6          0.08
+## 15      15    4          0.02
+## 16      16   15          0.01
+## 17      17    5          0.17
+## 18      18    7          0.11
+## 19      19    8          0.06
+## 20      20    2          0.23
+## 21      21   19          0.06
+## 22      22    4         -0.09
+## 23      23    1          0.00
+## 24      24    2          0.17
+## 25      25    4          0.18
+\end{verbatim}
+
+\includegraphics{note_pokemon_avaliacao_demo_files/figure-latex/unnamed-chunk-9-1.pdf}
+
+\hypertarget{hc_cor}{%
+\subsection{3. hc\_cor}\label{hc_cor}}
+
+\begin{itemize}
+\tightlist
+\item
+  Calcular a dissimilaridade Se fizer \texttt{corrplot()} dos dados, ele
+  calcula a correla??o entre as vari?veis:
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{corrplot}\NormalTok{(}\KeywordTok{cor}\NormalTok{(dados_s), }\DataTypeTok{order =} \StringTok{"original"}\NormalTok{, }\DataTypeTok{tl.col=}\StringTok{'black'}\NormalTok{, }\DataTypeTok{tl.cex=}\NormalTok{.}\DecValTok{75}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{note_pokemon_avaliacao_demo_files/figure-latex/unnamed-chunk-10-1.pdf}
+
+Mas n?o ? essa a nossa inten??o, pois queremos saber a correla??o entre
+as observa??es. Para isso precisamos transpor com a fun??o \texttt{t()}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{correla<-}\KeywordTok{cor}\NormalTok{(}\KeywordTok{t}\NormalTok{(dados_s)) }\CommentTok{# correlacao entre observacoes}
+\NormalTok{correla[}\DecValTok{1}\OperatorTok{:}\DecValTok{5}\NormalTok{, }\DecValTok{1}\OperatorTok{:}\DecValTok{5}\NormalTok{] }\CommentTok{# 5 primeiras linhas e 5 primeiras colunas}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##            1           2          3           4           5
+## 1 1.00000000  0.11409437  0.2826975  0.05907968  0.06427981
+## 2 0.11409437  1.00000000  0.2113127 -0.02471234 -0.43851464
+## 3 0.28269750  0.21131273  1.0000000  0.16034031 -0.24846787
+## 4 0.05907968 -0.02471234  0.1603403  1.00000000 -0.31422906
+## 5 0.06427981 -0.43851464 -0.2484679 -0.31422906  1.00000000
+\end{verbatim}
+
+Como o nosso intuito ? calcular a dissimilaridade, devemos transformar a
+similaridade em dissimilarida. Uma das formas ? fazer \(1 - cor\):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dissimil <-}\StringTok{ }\DecValTok{1} \OperatorTok{-}\StringTok{ }\NormalTok{correla }\CommentTok{# dissimilaridade}
+\NormalTok{dissimil[}\DecValTok{1}\OperatorTok{:}\DecValTok{5}\NormalTok{,}\DecValTok{1}\OperatorTok{:}\DecValTok{5}\NormalTok{] }\CommentTok{# 5 primeiras linhas e 5 primeiras colunas}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##           1         2         3         4         5
+## 1 0.0000000 0.8859056 0.7173025 0.9409203 0.9357202
+## 2 0.8859056 0.0000000 0.7886873 1.0247123 1.4385146
+## 3 0.7173025 0.7886873 0.0000000 0.8396597 1.2484679
+## 4 0.9409203 1.0247123 0.8396597 0.0000000 1.3142291
+## 5 0.9357202 1.4385146 1.2484679 1.3142291 0.0000000
+\end{verbatim}
+
+Como a fun??o \texttt{hclust()} precisa usar uma matriz triangular, usar
+\texttt{as.dist()} para transformar a matriz em matriz triangular:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dissimil <-}\StringTok{ }\KeywordTok{as.dist}\NormalTok{(dissimil) }\CommentTok{# transforma em um "triangulo" de distancias}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{a.-grafico-cotovelo-1}{%
+\subsubsection{A. Grafico cotovelo}\label{a.-grafico-cotovelo-1}}
+
+Vendo o gr?fico:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{elbow_data <-}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{ward =} \KeywordTok{elbow_plot}\NormalTok{(}\DataTypeTok{data=}\NormalTok{dados_s, }
+                                           \DataTypeTok{dissim =}\NormalTok{ dissimil, }
+                                           \DataTypeTok{met =} \StringTok{"ward.D"}\NormalTok{),}
+                       \DataTypeTok{upgma =} \KeywordTok{elbow_plot}\NormalTok{(}\DataTypeTok{data=}\NormalTok{dados_s, }
+                                          \DataTypeTok{dissim =}\NormalTok{ dissimil, }
+                                          \DataTypeTok{met =} \StringTok{"average"}\NormalTok{),}
+                       \DataTypeTok{upgmc =} \KeywordTok{elbow_plot}\NormalTok{(}\DataTypeTok{data=}\NormalTok{dados_s, }
+                                          \DataTypeTok{dissim =}\NormalTok{ dissimil, }
+                                          \DataTypeTok{met =} \StringTok{"centroid"}\NormalTok{),}
+                       \DataTypeTok{k =} \KeywordTok{seq.int}\NormalTok{(}\DecValTok{1}\NormalTok{, }\KeywordTok{nrow}\NormalTok{(dados_s))) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{gather}\NormalTok{(}\DataTypeTok{key=}\StringTok{"Metodo"}\NormalTok{,}\DataTypeTok{value=}\StringTok{"WSS"}\NormalTok{, }\OperatorTok{-}\NormalTok{k)}
+
+\NormalTok{elbow_data }\OperatorTok{%>%}\StringTok{ }\KeywordTok{filter}\NormalTok{(k}\OperatorTok{<}\DecValTok{30}\NormalTok{)}\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{k,}\DataTypeTok{y=}\NormalTok{WSS, }\DataTypeTok{group=}\NormalTok{Metodo, }\DataTypeTok{color=}\NormalTok{Metodo, }\DataTypeTok{linetype=}\NormalTok{Metodo))}\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{(}\DataTypeTok{size=}\DecValTok{1}\NormalTok{)}\OperatorTok{+}\KeywordTok{theme_bw}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{note_pokemon_avaliacao_demo_files/figure-latex/unnamed-chunk-14-1.pdf}
+
+\hypertarget{b.-quantos-grupos-1}{%
+\subsubsection{B. Quantos grupos?}\label{b.-quantos-grupos-1}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{upgma <-}\StringTok{ }\KeywordTok{hclust}\NormalTok{(dissimil, }\DataTypeTok{method =} \StringTok{"average"}\NormalTok{)}
+\KeywordTok{plot}\NormalTok{(upgma)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{note_pokemon_avaliacao_demo_files/figure-latex/unnamed-chunk-15-1.pdf}
+
+\hypertarget{c.-silhouette-1}{%
+\subsubsection{C. Silhouette}\label{c.-silhouette-1}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{grupos <-}\StringTok{ }\KeywordTok{cutree}\NormalTok{(upgma, }\DataTypeTok{k =} \DecValTok{20}\NormalTok{)}
+\NormalTok{sil <-}\StringTok{ }\KeywordTok{silhouette}\NormalTok{(grupos, dissimil)}
+\KeywordTok{plot}\NormalTok{(sil)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{note_pokemon_avaliacao_demo_files/figure-latex/unnamed-chunk-16-1.pdf}
+
+\hypertarget{k_mean}{%
+\subsection{4. k\_mean}\label{k_mean}}
+
+\hypertarget{a.-grafico-cotovelo-2}{%
+\subsubsection{A. Grafico cotovelo}\label{a.-grafico-cotovelo-2}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{fviz_nbclust}\NormalTok{(dados_s, kmeans, }\DataTypeTok{method =} \StringTok{"wss"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{note_pokemon_avaliacao_demo_files/figure-latex/unnamed-chunk-17-1.pdf}
+
+
+\end{document}

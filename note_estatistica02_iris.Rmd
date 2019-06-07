@@ -1,0 +1,74 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+data(iris)
+head(iris)
+
+exer <- iris[iris$Species!='setosa',]
+
+#Normalidadeexer
+sepala_vers <- exer$Sepal.Length[exer$Species== 'versicolor']
+sepala_virg <- exer$Sepal.Length[exer$Species== 'virginica']
+
+shapiro.test(x =  sepala_vers) # ok - segue uma normalidade
+shapiro.test(x =  sepala_virg) # ok - segue uma normalidade, p-value
+
+
+par(mfrow=c(1,2))
+qqnorm(exp(sepala_vers),main = "qqnorm(exp(sepala_vers)"); qqline(exp(sepala_vers))
+qqnorm(log(sepala_vers),main = "qqnorm(log(sepala_vers)"); qqline(log(sepala_vers))
+
+par(mfrow=c(1,2))
+qqnorm(exp(sepala_virg),main = "qqnorm(exp(sepala_virg)"); qqline(exp(sepala_virg))
+qqnorm(log(sepala_virg),main = "qqnorm(log(sepala_virg)"); qqline(log(sepala_virg))
+
+# Amostras são independentes : sim são especies diferentes
+
+car::leveneTest(Sepal.Length  ~ Species, exer) # Aceita a hipotese nula, as variancias são iguais
+bartlett.test(Sepal.Length  ~ Species, exer) # Aceita a hipotese nula, as variancias são iguais
+bartlett.test(x = exer$Sepal.Length, g = exer$Species) # Aceita a hipotese nula, as variancias são iguais
+
+
+# Executar teste t 
+t.test(Sepal.Length  ~ Species, exer, var.equal=TRUE) # medias são iguais, regeito minha hiposete nula, p < 0.01 
+t.test(Sepal.Length  ~ Species, exer, var.equal=FALSE) # medias são iguais, regeito minha hiposete nula, p < 0.01 
+
+```
+```{r}
+data(iris)
+head(iris)
+
+exer <- iris[iris$Species!='versicolor',]
+
+#Normalidadeexer
+sepala_set <- exer$Sepal.Length[exer$Species== 'setosa']
+sepala_virg <- exer$Sepal.Length[exer$Species== 'virginica']
+
+summary(exer$Species)
+
+shapiro.test(x =  sepala_set) # ok - segue uma normalidade
+shapiro.test(x =  sepala_virg) # ok - segue uma normalidade, p-value
+
+
+par(mfrow=c(1,2))
+qqnorm(exp(sepala_set),main = "qqnorm(exp(sepala_set)"); qqline(exp(sepala_set))
+qqnorm(log(sepala_set),main = "qqnorm(log(sepala_set)"); qqline(log(sepala_set))
+
+par(mfrow=c(1,2))
+qqnorm(exp(sepala_virg),main = "qqnorm(exp(sepala_virg)"); qqline(exp(sepala_virg))
+qqnorm(log(sepala_virg),main = "qqnorm(log(sepala_virg)"); qqline(log(sepala_virg))
+
+summary(exer[exer$Species == 'setosa',]) 
+summary(exer[exer$Species == 'virginica',]) 
+
+# Amostras são independentes : sim são especies diferentes
+boxplot(Sepal.Length  ~ Species, exer)
+leveneTest(Sepal.Length  ~ Species, exer) # Aceita a hipotese nula, as variancias não são iguais, o p-valor é menor que alpha 0.05
+bartlett.test(Sepal.Length  ~ Species, exer) # Aceita a hipotese nula, as variancias não são iguais, o p-valor é menor que alpha 0.05
+bartlett.test(x = exer$Sepal.Length, g = exer$Species) # Aceita a hipotese nula, as variancias não são iguais, o p-valor é menor que alpha 0.05
+
+# Executar teste t 
+t.test(Sepal.Length  ~ Species, exer, var.equal=FALSE) # medias são iguais, regeito minha hiposete nula, p < 0.01 

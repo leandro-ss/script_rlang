@@ -1,0 +1,102 @@
+
+
+```{r message=FALSE, warning=FALSE}
+library(foreign)
+library(psych)
+library(dplyr)
+library(corrplot)
+library(GPArotation)
+library(tidyr)
+library(ggfortify)
+```
+
+```{r}
+setwd("C:/Users/Patricia/Google Drive/Cruzeiro/14. Analise de Componentes Principais/ACP2 - Alunos")
+pastilhas <- read.csv2('raw-material-characterization.csv', sep = ';', dec = '.')
+```
+
+```{r}
+#head(pastilhas)
+df <- pastilhas[3:8]
+head(df)
+```
+
+
+```{r}
+#Esfericidade de Bartlet
+bartlett.test(df)
+```
+
+```{r}
+# Ajuste do modelo - escolha do numero de componentes
+fit1 <- princomp(df, cor=TRUE)
+
+summary(fit1)
+```
+
+```{r}
+# Scree Plot
+plot(fit1, type="lines") 
+```
+
+
+```{r}
+# Ajuste do modelo com numero de componentes definido
+fit2 <- principal(df, covar = FALSE, nfactors = 2)
+
+# Interpretacao (correlacoes)
+fit2
+
+```
+
+
+
+```{r}
+# Comunalidades
+fit2$communality
+# comunalidade ? a variabilidade explicada de cada variavel
+# a menos explicada foi size5 e a mais foi a tem DSC
+```
+
+
+
+```{r}
+#autoplot(prcomp(scale(df)))
+autoplot(prcomp(scale(df)), data = df,
+         loadings = TRUE, loadings.colour = 'blue',
+         loadings.label = TRUE, loadings.label.size = 3)
+```
+
+
+```{r}
+df.fatores <- as_tibble(cbind(Outcome=pastilhas$Outcome, fit2$scores))
+summary(df.fatores)
+```
+
+
+```{r}
+df.fatores$Outcome <- pastilhas$Outcome
+df.fatores.g <- gather(df.fatores, "Fator", "Score", 2:3)
+head(df.fatores.g)
+```
+
+
+```{r}
+ggplot(df.fatores.g, aes(x=Fator, y=Score, fill=Outcome)) + 
+  geom_boxplot(alpha=0.6)
+```
+
+```{r}
+glimpse(df.fatores)
+```
+
+
+```{r}
+mod.logi <- glm(formula = Outcome ~ RC1 + RC2,
+                data = df.fatores,
+                family = 'binomial')
+
+summary(mod.logi)
+```
+
+

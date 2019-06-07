@@ -1,0 +1,116 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+
+
+```{r}
+## Introducao
+---
+title: "R Notebook"
+output: html_notebook
+---
+```
+
+```{r}
+
+if(!require(dplyr)){install.packages("dplyr")}          # unite, filter, select, %>%
+if(!require(tidyr)){install.packages("tidyr")}          # gather, spread
+if(!require(ggplot2)){install.packages("ggplot2")}      # graficos
+if(!require(lsmeans)){install.packages("lsmeans")}      # graficos
+```
+
+
+
+```{r}
+## Introducao
+set.seed(101101)
+
+data("iris")
+
+shapiro.test(iris$Petal.Length)
+shapiro.test(iris$Petal.Length[iris$Species=='setosa'] )
+shapiro.test(iris$Petal.Length[iris$Species=='versicolor'] )
+shapiro.test(iris$Petal.Length[iris$Species=='virginica'] )
+
+bartlett.test(Petal.Length ~ Species, iris)
+####O p-valor foi de `r (bartlett.test(petalas ~ especies, data = flores))$p.value a probabilidade de erro tipo I. Como a nossa Hipotese Nula no teste de Bartlett são de que *as variancias sao iguais* e, tradicionalmente, *consideramos que valores abaixo de 5% de erro tipo I como significativo* suficiente (deveria ser abaixo de 5%), portanto, rejeitamos a nossa hip?tese nula e a aceitamos, concluindo que: **As vari?ncias entre os dois grupos sao diferentes iguais**.
+
+# Homocedasticidade
+tapply(iris$Petal.Length, iris$Species, var)
+
+# 1º forma 
+summary(aov(Petal.Length ~ Species, iris))
+TukeyHSD(aov(Petal.Length ~ Species, iris))
+
+plot(TukeyHSD(aov(Petal.Length ~ Species, iris)))
+plot(aov(Petal.Length ~ Species, iris))
+```
+
+```{r}
+## Introducao
+set.seed(101101)
+data("CO2")
+dataset = CO2
+summary(dataset)
+
+head (dataset)
+
+table(dataset$Treatment,dataset$Type)
+
+bartlett.test(uptake ~Type, dataset)
+bartlett.test(uptake ~Treatment, dataset)
+#O p-valor foi de `r (bartlett.test(petalas ~ especies, data = flores))$p.value`, a probabilidade de erro tipo I. Como a nossa Hipotese Nula no teste de Bartlett são de que *as variancias sao iguais* e, tradicionalmente, *consideramos que valores abaixo de 5% de erro tipo I como significativo* suficiente (deveria ser abaixo de 5%), portanto, rejeitamos a nossa hip?tese nula e a aceitamos, concluindo que: **As vari?ncias entre os dois grupos sao diferentes iguais**.
+
+tapply(dataset$uptake, dataset$Treatment, var)
+tapply(dataset$uptake, dataset$Type, var)
+
+tapply(dataset$uptake, dataset$Treatment, shapiro.test)
+tapply(dataset$uptake, dataset$Type, shapiro.test)
+#Sendo que o teste de Shapiro-Wilk tem como *H0: os dados seguem a distribuicao normal*. Tradicionalmente, consideramos como significativo, temos que a probabilidade erro tipo I aceita ($\alpha$) ? de 5%, e os nossos p-valores s?o superiores a esse valor (0.05 e 0.1), podemos afirmar que n?o podemos rejeitar a Hip?tese Nula, aceitando-a: **os nossos dados seguem a distribuicao**.
+
+summary(aov(uptake ~Treatment*Type, dataset))
+
+dataset = dataset[dataset$conc>500,]
+
+
+# 2. Homocedasticidade
+bartlett.test(dataset$uptake ~dataset$Type)
+bartlett.test(dataset$uptake ~dataset$Treatment)
+
+# 3. Dados são independentes e estão balanceados
+tapply(dataset$uptake, dataset$Treatment, var)
+tapply(dataset$uptake, dataset$Type, var)
+
+tapply(dataset$uptake, dataset$Treatment, shapiro.test)
+tapply(dataset$uptake, dataset$Type, shapiro.test)
+
+# 4. anova two-way, se independentes e balanceados
+summary(aov(uptake ~Treatment*Type, dataset))
+
+# 5. Post hoc, se anova for significativa
+TukeyHSD(aov(uptake ~Treatment*Type, dataset))
+
+
+# 4. anova two-way, se independentes e balanceados
+summary(aov(uptake ~Treatment*Type, dataset))
+
+# 5. Post hoc, se anova for significativa
+TukeyHSD(aov(uptake ~Treatment*Type, dataset))
+
+ 
+#modal=lm(uptake ~ factor(Treatment)*Type, data= dataset)
+#lsmeans(modal, uptake ~ factor(Treatment):Type, adjust="tukey")
+
+
+dataset = CO2
+
+# ancova "two-way", é preferivel utilizar modelos mistos, ao inves de ancova, para esse caso porque devido ao numero de variaveis de numericas
+aov (uptake ~ Treatment*Type*conc,dataset)
+
+summary(aov (uptake ~ Treatment*Type*conc,dataset))
+
+
+```

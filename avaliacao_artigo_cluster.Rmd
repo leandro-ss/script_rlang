@@ -1,0 +1,332 @@
+---
+title: "Avaliação de Clusters - Artigo Transando perfil de Personalidade"
+author: "Leandro Sampaio Silva"
+date: "09 de março de 2019"
+output:
+  html_document: default
+---
+
+## Resumo
+### Objetivo
+
+Verificar a possibilidade de se traçar um perfil da personalidade juntando certos aspectos e grupos (clusters). Através da https://quantdev.ssri.psu.edu/sites/qdev/files/IntroBasicEFA_2017_1013.html
+Foram utilizados os dados provenientes de um estudo feito atraves de analise fatorial, presume-se que análise fatorial ira discriminar certos aspectos das persolidades dos individuos, para meu contento espero conseguir um resultado similar atraves da analise de clusters onde sera possivel ter uma visao grafista dos atraves de uma analise exploratoria que viabilizaria uma visao de como os perfis compartilham caracteristicas ao mesmo tempo que apresentam caracteristicas proprias.
+
+### Resultado/Conclusao
+
+Verificou se que apesar dos resultados serem significativos, houve uma grande diferença entre os resultados obtidos, tendo que as tecnicas são complementares e nao sobrepostas. Para uma visão clara dos dados e resutlados, se faz necessária a diminuição do número de variáveis de forma que elas ainda sejam unicas e explicaveis para então a montagem do cluster afim de verificar as relações em comum e nao a correlacao em si.
+### Palavra-Chave 
+	_cluster,fatorial,personalidades,estatistica_
+	
+### Ferramentas
+	Como ferramenta de análise foi utilizado o R versão R _version3.5.1(2018-07-02)_,
+	com os seguintes pacotes _tidyverse,cluter,NbClust,pvclust,factoextra,fpc,dbscan,corrplot_
+	
+### Bibligrafia 
+https://quantdev.ssri.psu.edu/sites/qdev/files/IntroBasicEFA_2017_1013.html
+https://sillasgonzaga.github.io/2016-06-28-clusterizacaoPaises/
+
+## 1. Dados e Métodos
+
+Definição das bibliotecas a serem usadas durante o trabalho
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+if(!require(psych)){install.packages("psych")}
+if(!require(tidyverse)){install.packages("tidyverse")}
+if(!require(cluster)){install.packages("cluster")}
+if(!require(NbClust)){install.packages("NbClust")}
+if(!require(pvclust)){install.packages('pvclust')}
+if(!require(factoextra)){install.packages("factoextra")}
+if(!require(fpc)){install.packages("fpc")}
+if(!require(dbscan)){install.packages("dbscan")}
+if(!require(corrplot)){install.packages("corrplot")}
+set.seed(1)
+```
+
+Definição do template dos gráficos exibidos
+```{r}
+myTheme <- theme(plot.title = element_text(family = "Helvetica", face = "bold", size = (15)), 
+           legend.title = element_text(colour = "steelblue",  face = "bold.italic", family = "Helvetica"), 
+           legend.text = element_text(face = "italic", colour="steelblue4",family = "Helvetica"), 
+            axis.title = element_text(family = "Helvetica", size = (10), colour = "steelblue4"),
+            axis.text = element_text(family = "Courier", colour = "cornflowerblue", size = (10)))
+```
+
+Definição das funções auxiliares para o modelo 
+```{r}
+wss <- function(d) {
+  sum(scale(d, scale = FALSE)^2)
+}
+wrap <- function(i, hc, x) {
+  cl <- cutree(hc, i)
+  spl <- split(x, cl)
+  wss <- sum(sapply(spl, wss))
+  wss
+}
+elbow_plot<- function(data, dissim,met){
+  cl = hclust(dissim, method = met)  
+  res <- sapply(seq.int(1, nrow(data)), 
+                  wrap, h =cl, 
+                  x = data)
+  return (res)
+}
+round_df <- function(x, digits) {
+    # round all numeric variables
+    # x: data frame 
+    # digits: number of digits to round
+    numeric_columns <- sapply(x, mode) == 'numeric'
+    x[numeric_columns] <-  round(x[numeric_columns], digits)
+    x
+}
+```
+
+### 2. Dados
+Para resolver o problema dos valores ausentes (os NA), poderia ser aplicada uma técnica robusta, mas como esta é uma análise simples ou optei por remover os países que tinham algum dado faltando. Para uma interpretação mais facíl também foram convertidos os nomes do idioma ingles para o portugues
+```{r fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+dados <- na.omit(read.csv('dataset/dados_personalidade_32.csv', sep = ';', dec = ','))  %>%
+  rename (
+    distante	=	distant,
+    falador	=	talkatv,
+    descuidado	=	carelss,
+    trabalhador	=	hardwrk,
+    ansioso	=	anxious,
+    agradavel	=	agreebl,
+    tenso	=	tense,
+    carinhoso	=	kind,
+    grosseiro	=	opposng,
+    tranquilo	=	relaxed,
+    desorganizado	=	disorgn,
+    estrovertido	=	outgoin,
+    encorajador	=	approvn,
+    timido	=	shy,
+    disciplinado	=	discipl,
+    severo	=	harsh,
+    perseverante	=	persevr,
+    amigavel	=	friendl,
+    preocupado	=	worryin,
+    responsavel	=	respnsi,
+    contraido	=	contrar,
+    sociavel	=	sociabl,
+    preguicoso	=	lazy,
+    cooperativo	=	coopera,
+    quieto	=	quiet,
+    organizado	=	organiz,
+    detalhista	=	criticl,
+    relaxado	=	lax,
+    descontraído	=	laidbck,
+    retraido	=	withdrw,
+    desistivel	=	givinup,
+    maleavel	=	easygon	
+  )
+dados_s <- dados %>% scale() 
+dados_s_t <- dados_s %>% t()
+```
+
+## 2. Calculo da Distancia:
+Definimos um calculo para a distancia por 
+```{r fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+distancia   <- dist(dados_s)
+distancia_t <- dist(dados_s_t)
+```
+
+### B. Definição da Quantidade de Agrupamentos
+Para a o calculo da quantidade de grupos ideal para o modelo, seguimos a metodologia conversinal e aplicamos o grafico de cotovelo considerando as seguintes metodologias _ward.D_, _median_ e por _centroid_ a definição da quantidade de clusters ainda interpretativa mas agora comparativa entre os modelos sugere que o metodo de _ward.D_ permite uma presisão melhor e sugere de 7 à 8 grupos. 
+```{r fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+elbow_data <- data.frame(ward = elbow_plot(data=dados_s, 
+                                           dissim = distancia, 
+                                           met = "ward.D"),
+                       upgma = elbow_plot(data=dados_s, 
+                                          dissim = distancia, 
+                                          met = "median"),
+                       upgmc = elbow_plot(data=dados_s, 
+                                          dissim = distancia, 
+                                          met = "centroid"),
+                       k = seq.int(1, nrow(dados_s))) %>%
+  gather(key="Metodo",value="WSS", -k)
+elbow_data %>%
+  ggplot(aes(x=k,y=WSS, group=Metodo, color=Metodo, linetype=Metodo))+
+  geom_line(size=1)+ggtitle("Comparativo de Grafico Cotovelo")+theme_bw()+myTheme
+```
+
+Neste trabalho utilizou-se alem dos metodos normais para definição da quantidade de clusters, uma segunda abordagem baseando-se em uma transposicao das variaveis de formae entao a consepção de um dendograma e assim definir um possivel interpretação dos perfis das pessoas para a confirmação do número de agrupamentos dentro do cluster.
+```{r fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+res <- factoextra::hcut(dados_s_t, k = 8);fviz_dend(res, rect = TRUE)+ggtitle("Dendograma exemplificando os possiveis Perfis")+myTheme
+```
+
+Visualizando a distribuição dos dados no dendrograma 
+```{r fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+res <- factoextra::hcut(dados_s, k = 8);fviz_dend(res, rect = TRUE)+ggtitle("Dendograma exemplificando a distribucao das observações")+myTheme
+```
+
+```{r fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+res <- factoextra::hcut(dados_s, k = 8)
+factoextra::fviz_cluster(res)+theme_bw()
+```
+
+## Similaridades e Dissimilaridades
+Se fizer `corrplot()` dos dados, ele calcula a correlação entre as variáveis. Mas n?o ? essa a nossa inten??o, pois queremos saber a correla??o entre as observa??es. Para isso precisamos transpor com a fun??o `t()`:
+```{r fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+par(mfrow = c(1,2))
+corrplot(cor(dados_s), order = "original", tl.col='black', tl.cex=.75) 
+corrplot(cor(dados_s), order = "hclust", tl.col='black', tl.cex=.75) 
+par(mfrow = c(1,1))
+```
+Após uma ordenação simples das variáveis de forma a aproximar os correlatos, é visivel formação de agrupamentos, contudo, para o estudo queremos saber temos o mesmo k grupos entre as observações, para isso faremos a distribuicoes das observacoes das variaveis através de metodos _hierárquicos_ e _não_ _hierárquicos_ 
+
+```{r fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+correla<-cor(t(dados_s)); 
+#round_df(correla[1:8, 1:8], 6) Nao entendi pq reduzir a quantidade o dataset, nem os criterios que poderiam ser aplicados para a redução
+dissimil <- 1 - correla # dissimilaridade
+#round_df(dissimil[1:8,1:8],7)  Nao entendi pq reduzir a quantidade o dataset, nem os criterios que poderiam ser aplicados para a redução
+dissimil <- as.dist(dissimil) 
+```
+
+```{r fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+elbow_data <- data.frame(ward = elbow_plot(data=dados_s, 
+                                           dissim = dissimil, 
+                                           met = "ward.D"),
+                       upgma = elbow_plot(data=dados_s, 
+                                          dissim = dissimil, 
+                                          met = "average"),
+                       upgmc = elbow_plot(data=dados_s, 
+                                          dissim = dissimil, 
+                                          met = "centroid"),
+                       k = seq.int(1, nrow(dados_s))) %>%
+  gather(key="Metodo",value="WSS", -k)
+
+elbow_data %>% filter(k<16)%>%
+  ggplot(aes(x=k,y=WSS, group=Metodo, color=Metodo, linetype=Metodo))+
+  geom_line(size=1)+theme_bw()
+```
+No caso tentamos uma interpretação por análise do cutovelo, contudo a mesmoa se mostra com pouco utilidade visto que cada modelo converge de uma forma.
+
+## Modelos Não Hierárquico
+
+```{r fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+par(mfrow = c(1,3))
+plot(hclust(dissimil, method = "average"))
+plot(hclust(dissimil, method = "ward.D"))
+plot(hclust(dissimil, method = "centroid"))
+par(mfrow = c(1,1))
+```
+Analisando o dendograma podemos considerar como ponto de corte k=4 isso considerando _ward_ e _average_ _(UPGMA)_, entrato que por centroid se vê pouco valor interpretativo.
+
+```{r fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+res <- factoextra::hcut(dados_s, k = 4)
+factoextra::fviz_cluster(res)+theme_bw()
+```
+
+```{r fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+fviz_nbclust(dados_s, kmeans, method = "silhouette")
+fviz_nbclust(dados_s, kmeans, method = "wss")
+fviz_nbclust(dados_s, kmeans, method = "gap_stat")
+```
+
+Alguns grupos (clusters) se mantiveram os mesmos, outros nao para dados consistentes, tendo o modelo ficado estavel após a 4º iteração.
+```{r fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+dados_km_1 <- kmeans(dados_s, 4, nstart=1)
+dados_km_2 <- kmeans(dados_s, 4, nstart=2)
+dados_km_4 <- kmeans(dados_s, 4, nstart=4)
+dados_km_6 <- kmeans(dados_s, 4, nstart=6)
+
+# Verifique a razao entre SQ intragrupos total e intergrupos
+dados_km_1$tot.withinss/dados_km_1$betweenss
+dados_km_2$tot.withinss/dados_km_2$betweenss
+dados_km_4$tot.withinss/dados_km_4$betweenss
+dados_km_6$tot.withinss/dados_km_6$betweenss
+
+# Compare os grupos resultantes
+table(dados_km_1$cluster, dados_km_6$cluster)
+```
+
+     
+```{r fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+# criar os clusteres
+lista_clusteres <- kmeans(dados_s, centers = 4, nstart = 4)$cluster
+dd <- cbind(dados_s, cluster = lista_clusteres)
+
+# função customizada para calcular a média dos indicadores para cada cluster
+cluster.summary <- function(data, groups) {
+  x <- round(aggregate(data, list(groups), mean), 2)
+  x$qtd <- as.numeric(table(groups))
+  # colocar coluna de quantidade na segunda posição
+  x <- x[, c(1,2,3,4,5,6,7,8,9)]
+  return(x)
+}
+(tabela <- cluster.summary(dados, lista_clusteres))
+```
+Aqui temos um esboco dos agrupamentos considerando somente as 8 primeiras varaiveis do modelo.
+
+```{r fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+factoextra::fviz_cluster(kmeans(dados_s, centers = 4, nstart = 4), dados, ellipse.type = "norm")
+```
+
+
+```{r}
+dados_s[c('166'),] %>% dist
+
+mat_distante <- dados_s %>% dist(diag = TRUE, upper = TRUE) %>% as.matrix
+# 5 países com menor dissimilaridade
+mat_distante['166', ] %>% sort() %>% head(6)
+```
+
+```{r fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+dados_r <- fa(dados, 8, rotate="none", fm = "pa") %>% .$scores
+distancia_r <- dist(dados_r);
+```
+
+
+```{r fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+factoextra::fviz_cluster(kmeans(dados_r, centers = 4, nstart = 4), dados, ellipse.type = "norm")
+```
+
+### A. Grafico cotovelo
+```{r fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+elbow_data <- data.frame(ward = elbow_plot(data=dados_r, 
+                                           dissim = distancia_r, 
+                                           met = "ward.D"),
+                       upgma = elbow_plot(data=dados_r, 
+                                          dissim = distancia_r, 
+                                          met = "median"),
+                       upgmc = elbow_plot(data=dados_r, 
+                                          dissim = distancia_r, 
+                                          met = "centroid"),
+                       k = seq.int(1, nrow(dados_r))) %>%
+  gather(key="Metodo",value="WSS", -k)
+elbow_data %>%
+  ggplot(aes(x=k,y=WSS, group=Metodo, color=Metodo, linetype=Metodo))+
+  geom_line(size=1)+theme_bw()
+```
+
+```{r}
+# fixar uma seed para garantir a reproducibilidade da análise:
+res_fpc<- fpc::dbscan(data = dados_r, eps = 1, 
+			MinPts = 2, 
+			scale = TRUE, 
+			method = c("hybrid", "raw", "dist"))
+
+factoextra::fviz_cluster(res_fpc, dados, geom = "point")
+```
+
+```{r fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+# criar os clusteres
+lista_clusteres <- kmeans(dados_r, centers = 4, nstart = 4)$cluster
+dd <- cbind(dados_r, cluster = lista_clusteres)
+
+# função customizada para calcular a média dos indicadores para cada cluster
+cluster.summary <- function(data, groups) {
+  x <- round(aggregate(data, list(groups), mean), 2)
+  x$qtd <- as.numeric(table(groups))
+  # colocar coluna de quantidade na segunda posição
+  x <- x[, c(1,2,3,4,5,6,7,8,9)]
+  return(x)
+}
+(tabela <- cluster.summary(dados_r, lista_clusteres))
+```
+
+```{r}
+#dados_r <- cbind (dados_r,  lista_clusteres) 
+#cl_brasil <- dados_r['166', ]$cluster
+#x <- dados[dados_r$cluster == cl_brasil, ]
+#x[order(-x$distante),] %>% knitr::kable()
+```
