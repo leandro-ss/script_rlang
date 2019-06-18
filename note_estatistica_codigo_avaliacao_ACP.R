@@ -31,7 +31,6 @@ plot(ajuste1, type="lines")
 # Ajuste do modelo com n?mero de componentes definido
 ajuste2 <- principal(dados, covar = FALSE, nfactors = 3);summary(ajuste2)
 
-
 summary(cbind(var.name , ajuste2$scores))
 transpose_t =  t(ajuste2$score)
 colnames(transpose_t) <- as.character(unlist(var.name))
