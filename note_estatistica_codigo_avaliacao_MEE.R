@@ -38,29 +38,17 @@ dat$RENDA[dat$RENDA == 'Mais de 20 salários mínimos (a cima de R$ 19.080)'] <-
 dat$RENDA <- as.numeric(dat$RENDA)
 # Step 1: Specify model
 mod <- '
-#CMS  =~ Q6 + Q7 + Q8
-#CMS  =~ Q6 + Q7 + Q8 + Q13
-CMS  =~ Q6 + Q7 + Q8 
-CMMA =~ Q9 + Q10 + Q11 + Q26
-#ACAA =~ Q12 + Q13 + Q14 + Q15
-ACS  =~ Q16 + Q17 + Q18 + Q26 + Q41
-RS   =~ Q20 + Q21 + Q22
-#SP   =~ Q23 + Q24 + Q25
-SP   =~ Q24 + Q25 + Q26 + Q8
-PE   =~ Q26 + Q27 + Q28
-#CP   =~ Q29 + Q30 + Q31
-#CP   =~ Q29 + Q30
-RM   =~ Q32 + Q33 + Q34
-A    =~ Q35 + Q36 + Q37 + Q38
-IC   =~ Q39 + Q40 + Q41
-
-#A    ~ CMS + CMMA + ACAA + ACS + RS + SP + PE + CP + RM
-#A    ~  CMMA + ACS + RS + SP + PE + CP + RM
-#A    ~  CMMA + ACS + RS + SP + PE + RM
-A    ~  CMMA + ACS + RS + PE + RM
-#IC   ~ A + IDADE + GENERO + ESCOLARIDADE + RENDA 
-#IC   ~ A + IDADE + ESCOLARIDADE + RENDA + ACAA + CMS 
-IC   ~ A + IDADE + ESCOLARIDADE + RENDA 
+  CMS  =~ Q6 + Q7 + Q8 
+  CMMA =~ Q9 + Q10 + Q11 + Q26
+  ACS  =~ Q16 + Q17 + Q18 + Q26 + Q41
+  RS   =~ Q20 + Q21 + Q22
+  SP   =~ Q24 + Q25 + Q26 + Q8
+  PE   =~ Q26 + Q27 + Q28
+  RM   =~ Q32 + Q33 + Q34
+  A    =~ Q35 + Q36 + Q37 + Q38
+  IC   =~ Q39 + Q40 + Q41
+  A    ~  CMMA + ACS + RS + PE + RM
+  IC   ~ A + IDADE + ESCOLARIDADE + RENDA 
 '
 # Step 2: Estimate model
 mod.fit <- sem(mod, data=dat, std.lv = TRUE);summary(mod.fit, fit.measures = TRUE)

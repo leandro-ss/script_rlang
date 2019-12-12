@@ -1,0 +1,141 @@
+---
+title: "Validacao de Constructo"
+author: "UNICSUL"
+date: "4 de julho de 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+if(!require(irr)){install.packages('irr')}
+if(!require(psych)){install.packages('psych')}
+if(!require(dplyr)){install.packages('dplyr')}
+if(!require(psychometric)){install.packages('psychometric')}
+if(!require(semTools)){install.packages('semTools')}
+if(!require(semPlot)){install.packages('semPlot')}
+if(!require(purrr)){install.packages('purrr')}
+```
+
+# Confiabilidade
+
+## 1. Equivalência
+
+### A. Inter-rater
+
+```{r}
+ultima_aula <- read.csv("dataset/ultima_aula.csv")
+# Matriz de Correlacao das notas dos experts
+cor(ultima_aula)
+
+# Porcentagem de concordancia dos experts
+irr::agree(t(ultima_aula))
+```
+
+Não houve concordância entre os respondentes.
+
+```{r}
+# checar confiabilidade inter-rater 
+psych::cohen.kappa(t(ultima_aula))
+```
+
+## 2. Consistência interna
+
+### A. Content Validity Ratio --> Validade do Conteudo
+
+### B. Coeficiente Alfa
+
+Alfa de Cronbach é normalmente utilizado para medir a confiabilidade em uma unica dimensao.
+Para a nossa E.F.A. (), foram determinados que os itens 1-3, 4-6 e 7-8 são dimensoes dos dados de `brand`, sendo respecitvamente as dimensoes: "Qualidade do Produto" "Desejo de pagar" e "Diferenciação do Produto". 
+Usaremos `psych` e `dplyr` para obtermos o alfa estandardizado.
+
+Vendo os nomes das variaveis que irao compor as variaveis latentes:
+
+```{r}
+ultima_aula<- read.csv("dataset/ultima_aula.csv")
+names(ultima_aula)
+```
+
+Vendo o alfa de todas as variaveis (sem distinção)
+
+```{r}
+psych::alpha(ultima_aula, check.keys=TRUE )$total$std.alpha
+```
+
+Criando novos data.frames para cada uma das três dimensoes e vendo o alpha de cada dimensao:
+
+Dimensao Qualidade (`p_strutura`):
+
+```{r}
+p_strutura <- dplyr::select(ultima_aula, c(Q1, Q2, Q3))
+psych::alpha(p_strutura)$total$std.alpha
+```
+
+Dimensao Desejo (`p_conhecimento`):
+
+```{r}
+p_conhecimento <- dplyr::select(ultima_aula, c(Q4,Q5,Q6))
+psych::alpha(p_conhecimento)$total$std.alpha
+```
+
+Dimensao Diferencial (`p_comodidade`):
+
+```{r}
+p_comodidade <- dplyr::select(ultima_aula, c(Q8,Q9,Q10))
+psych::alpha(p_comodidade)$total$std.alpha
+```
+
+O valor do alfa deve ser positivo, variando entre 0 e 1, tendo as seguintes leituras:
+
+Superior a 0,9 – consistência muito grande. Considere retirar variavel.
+Entre 0,8 e 0,9 – muito boa
+Entre 0,7 e 0,8 – razoável
+Entre 0,6 e 0,7 – fraca
+Inferior a 0,6 – inadmissível. considere retirar variavel
+
+#Nao feito
+
+Os escores de alfa de Cronbach e de split-half tendem a se comportar na mesma maneira.
+Porém, a confiabilidade split-half não é o mais apropriado para multiplos constructos ao mesmo tempo.Portanto, o uso de alfa de Cronbach é a medida padrao de confiabilidade para consistência interna.
+
+## 3. Estabilidade
+
+# Nao feito
+
+*“um teste é válido se de fato mede o que supostamente deve medir”*
+
+A santíssima trindade da validade é composta pela `Validade de Conteúdo` (uma variável observada/medida representa uma variável latente?), `Validade de Constructo` (pode ser convergente e divergente) e `Validade de Critério` (pode ser a preditiva e convergente).
+
+## 1. Conteudo
+
+Avalia quão bem uma técnica/instrumento mede um constructo teórico.
+
+# Nao feito
+
+## 2. Constructo
+
+### A. Validade Convergente e Validade Discriminante
+
+```{r}
+
+model<-"P_ESTRUTURA =~ Q1+Q2+Q3
+        P_CONHECIMENTO =~ Q4+Q5+Q6
+        P_COMODIDADE =~ Q8+Q9+Q10
+        P_GERAL =~ P_ESTRUTURA + P_CONHECIMENTO + P_COMODIDADE
+        "
+
+ultima_aula_CFA<-lavaan::cfa(model=model, data=ultima_aula)
+
+# Summarize results with fit measures and standardized estimates
+summary(ultima_aula_CFA, fit.measures=T, standardized=T)
+```
+
+Para ver se o constructo apresenta validade `Convergente` e/ou `Discriminante`, a função `reliability` do pacote `semTools` consegue fornecer esses indicios. Para isso, observar os valores de omega (que devem ser maiores de 0.9 para indicar convergência) e `avevar` para mostrar que é discriminante (deve ser maior do que 0.5 para ser discriminate).
+
+```{r}
+# Construct validity
+semTools::reliability(ultima_aula_CFA)
+```
+O Ômega esta adequado
+Avevar aponta que as variaveis sao  discriminantes.
+
+

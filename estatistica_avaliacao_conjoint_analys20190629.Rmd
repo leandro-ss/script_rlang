@@ -1,0 +1,82 @@
+---
+title: "estatistica_avaliacao_conjoint_analys20190629"
+author: "Leandro Sampaio"
+output:
+  html_document: 
+    df_print: default
+    keep_md: yes
+    smart: no
+    toc: yes
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = TRUE,
+	message = FALSE,
+	warning = FALSE
+)
+if(!require(conjoint)){install.packages("conjoint")}
+if(!require(cluster)){install.packages("cluster")}
+if(!require(mlogit)){install.packages("mlogit")}
+if(!require(tidyverse)){install.packages("tidyverse")}
+
+predict_mnl <- function(model, products) {  
+  data.model <- model.matrix(update(model$formula, 0 ~ .), 
+                             data = products)[,-1]  
+  utility <- data.model %*% model$coefficients 
+  share <- exp(utility)/sum(exp(utility))  
+  cbind(share, products)
+}
+```
+# Carros Esportivos
+
+## 1.Leitura dos dados
+```{r}
+sportscar_long <- read.csv("dataset/sportscar_choice_long.csv")
+sportscar_long$seat<-as.factor(sportscar_long$seat)
+sportscar <- mlogit.data(sportscar_long,
+                       shape = "long", 
+                       alt.var = "alt",
+                       choice = "choice") %>% select(-segment)
+
+table (sportscar$seat)
+```
+
+## 2.Construir um Moledo
+
+```{r}
+model <- mlogit(choice ~ 0+seat+trans+convert+price, data=sportscar);#summary(model)
+```
+
+## 3.Interpretar os coeficientes 
+
+```{r}
+str("Conforme ja conehcido do segmento americano carros automaticos tendem a ser sginificativos para o modelo tendo a preferencia do publico norte americano, outro fator importante e o preco que ajuda nas vendas, tambem existe uma preferencia pelo modelo com 5 lugares, contudo isso comparado ao modelo nulo que no caso e de 2 lugares. Também há uma prefenrecia por modelos converciveis")
+```
+
+## 4.Desenhar um novo produto e ver o share previsto
+```{r}
+products <- data.frame(seat = factor(c(2, 2), levels=c(2,4,5)), 
+                       trans= factor(c("manual", "auto"), 
+                                     levels=c("auto", "manual")),
+                       convert=factor(c("no", "no"), 
+                                      levels=c("no", "yes")), 
+                       price = c(35, 30), 
+                       segment=factor(c("racer", "racer"), 
+                                      levels=c("basic", "fun", "racer")))
+predict_mnl(model, products)
+```
+
+## 5.Willingess to pay (razao entre o coeficinete do fator e preco)
+```{r}
+coef_price <- -1*coef(model)[5]
+coef(model)/coef_price
+```
+
+
+
+
+
+
+

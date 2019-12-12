@@ -1,0 +1,233 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={estatistica\_avaliacao\_conjoint\_analys20190629},
+            pdfauthor={Leandro Sampaio},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{estatistica\_avaliacao\_conjoint\_analys20190629}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{Leandro Sampaio}
+    \preauthor{\centering\large\emph}
+  \postauthor{\par}
+    \date{}
+    \predate{}\postdate{}
+  
+
+\begin{document}
+\maketitle
+
+\hypertarget{carros-esportivos}{%
+\section{Carros Esportivos}\label{carros-esportivos}}
+
+\hypertarget{leitura-dos-dados}{%
+\subsection{1.Leitura dos dados}\label{leitura-dos-dados}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sportscar_long <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"dataset/sportscar_choice_long.csv"}\NormalTok{)}
+\NormalTok{sportscar_long}\OperatorTok{$}\NormalTok{seat<-}\KeywordTok{as.factor}\NormalTok{(sportscar_long}\OperatorTok{$}\NormalTok{seat)}
+\NormalTok{sportscar <-}\StringTok{ }\KeywordTok{mlogit.data}\NormalTok{(sportscar_long,}
+                       \DataTypeTok{shape =} \StringTok{"long"}\NormalTok{, }
+                       \DataTypeTok{alt.var =} \StringTok{"alt"}\NormalTok{,}
+                       \DataTypeTok{choice =} \StringTok{"choice"}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }\KeywordTok{select}\NormalTok{(}\OperatorTok{-}\NormalTok{segment)}
+
+\KeywordTok{table}\NormalTok{ (sportscar}\OperatorTok{$}\NormalTok{seat)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##    2    4    5 
+## 2013 2006 1981
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#relevel(sportscar , levels = levels(seat)["4","5","2"]) # tentativa para trocar o fator seat de orderm para que mostrasse se o valor eh significativo junto do modelo }
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{construir-um-moledo}{%
+\subsection{2.Construir um Moledo}\label{construir-um-moledo}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model <-}\StringTok{ }\KeywordTok{mlogit}\NormalTok{(choice }\OperatorTok{~}\StringTok{ }\DecValTok{0}\OperatorTok{+}\NormalTok{seat}\OperatorTok{+}\NormalTok{trans}\OperatorTok{+}\NormalTok{convert}\OperatorTok{+}\NormalTok{price, }\DataTypeTok{data=}\NormalTok{sportscar);}\CommentTok{#summary(model)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{interpretar-os-coeficientes}{%
+\subsection{3.Interpretar os
+coeficientes}\label{interpretar-os-coeficientes}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{str}\NormalTok{(}\StringTok{"Conforme ja conehcido do segmento americano carros automaticos tendem a ser sginificativos para o modelo tendo a preferencia do publico norte americano, outro fator importante e o preco que ajuda nas vendas, tambem existe uma preferencia pelo modelo com 5 lugares, contudo isso comparado ao modelo nulo que no caso e de 2 lugares. Também há uma prefenrecia por modelos converciveis"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  chr "Conforme ja conehcido do segmento americano carros automaticos tendem a ser sginificativos para o modelo tendo "| __truncated__
+\end{verbatim}
+
+\hypertarget{desenhar-um-novo-produto-e-ver-o-share-previsto}{%
+\subsection{4.Desenhar um novo produto e ver o share
+previsto}\label{desenhar-um-novo-produto-e-ver-o-share-previsto}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Prevendo os shares do segmento de carros}
+\CommentTok{# Your task is to modify my code to predict shares for the "racer" segment}
+\CommentTok{# modify the code below so that the segement is set to "racer" for both alternatives}
+\CommentTok{# ajustar modelo usando mlogit() }
+\NormalTok{products <-}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{seat =} \KeywordTok{factor}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{, }\DecValTok{2}\NormalTok{), }\DataTypeTok{levels=}\KeywordTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{4}\NormalTok{,}\DecValTok{5}\NormalTok{)), }
+                       \DataTypeTok{trans=} \KeywordTok{factor}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{"manual"}\NormalTok{, }\StringTok{"auto"}\NormalTok{), }
+                                     \DataTypeTok{levels=}\KeywordTok{c}\NormalTok{(}\StringTok{"auto"}\NormalTok{, }\StringTok{"manual"}\NormalTok{)),}
+                       \DataTypeTok{convert=}\KeywordTok{factor}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{"no"}\NormalTok{, }\StringTok{"no"}\NormalTok{), }
+                                      \DataTypeTok{levels=}\KeywordTok{c}\NormalTok{(}\StringTok{"no"}\NormalTok{, }\StringTok{"yes"}\NormalTok{)), }
+                       \DataTypeTok{price =} \KeywordTok{c}\NormalTok{(}\DecValTok{35}\NormalTok{, }\DecValTok{30}\NormalTok{), }
+                       \DataTypeTok{segment=}\KeywordTok{factor}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{"racer"}\NormalTok{, }\StringTok{"racer"}\NormalTok{), }
+                                      \DataTypeTok{levels=}\KeywordTok{c}\NormalTok{(}\StringTok{"basic"}\NormalTok{, }\StringTok{"fun"}\NormalTok{, }\StringTok{"racer"}\NormalTok{)))}
+\CommentTok{# predict shares for the "racer" segment}
+\KeywordTok{predict_mnl}\NormalTok{(model, products)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##       share seat  trans convert price segment
+## 1 0.1023488    2 manual      no    35   racer
+## 2 0.8976512    2   auto      no    30   racer
+\end{verbatim}
+
+\hypertarget{willingess-to-pay-razao-entre-o-coeficinete-do-fator-e-preco}{%
+\subsection{5.Willingess to pay (razao entre o coeficinete do fator e
+preco)}\label{willingess-to-pay-razao-entre-o-coeficinete-do-fator-e-preco}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Divida os coeficientes pelo}
+\CommentTok{# valor negativo (pois as pessoas desejam pagar MENOS) da variavel `price` }
+\CommentTok{# (escala de $) = q eh o coeficiente 9}
+\NormalTok{coef_price <-}\StringTok{ }\DecValTok{-1}\OperatorTok{*}\KeywordTok{coef}\NormalTok{(model)[}\DecValTok{5}\NormalTok{]}
+\KeywordTok{coef}\NormalTok{(model)}\OperatorTok{/}\NormalTok{coef_price}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##       seat4       seat5 transmanual  convertyes       price 
+##  -0.1016566   2.2262181  -6.3863063   1.0530103  -1.0000000
+\end{verbatim}
+
+
+\end{document}
